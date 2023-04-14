@@ -20,5 +20,9 @@
     "webpack": "^5.79.0",
     "webpack-cli": "^4.10.0",
     "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "asn1js": "^3.0.5",
+    "pkijs": "^3.0.14"
   }
 }

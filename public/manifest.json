@@ -1,23 +1,23 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Kidspro Npm",
   "version": "0.1.0",
-  "description": "My Chrome Extension",
+  "description": "Guides kids to browse Internet more safely by tracking kids appropriate ratings on visiting websites",
   "icons": {
-    "16": "icons/icon_16.png",
-    "32": "icons/icon_32.png",
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "16": "icons/abc_icon.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"]
   },
-  "action": {
+  "browser_action": {
+    "default_icon": {
+      "32": "icons/abc_icon.png"
+    },
     "default_title": "Kidspro Npm",
     "default_popup": "popup.html"
   },
   "permissions": [
-    "storage"
+    "storage","webRequest", "webRequestBlocking", "scripting", "<all_urls>"
   ],
   "content_scripts": [
     {
