@@ -3,21 +3,32 @@
   "name": "Kidspro Npm",
   "version": "0.1.0",
   "description": "Guides kids to browse Internet more safely by tracking kids appropriate ratings on visiting websites",
+  "author": "jdaw087@uottawa.ca",
+  "page_action": {
+    "default_icon": "icons/dyno_icon.png",
+    "default_title": "kidspro Npm",
+    "default_popup": "popup.html",
+    "show_matches": ["https://*/*"]
+  },
   "icons": {
-    "16": "icons/abc_icon.png"
+    "16": "icons/abc_icon.png",
+    "32": "icons/dyno_icon.png"
   },
   "background": {
-    "scripts": ["background.js"]
-  },
-  "browser_action": {
-    "default_icon": {
-      "32": "icons/abc_icon.png"
-    },
-    "default_title": "Kidspro Npm",
-    "default_popup": "popup.html"
+    "scripts": [
+      "background.js"
+    ]
   },
   "permissions": [
-    "storage","webRequest", "webRequestBlocking", "scripting", "<all_urls>"
+    "activeTab", 
+    "storage",
+    "notifications",
+    "menus",
+    "contextMenus",
+    "webRequest",
+    "webRequestBlocking",
+    "scripting",
+    "<all_urls>"
   ],
   "content_scripts": [
     {

@@ -20,6 +20,8 @@ function getX509Ext(extensions, id) {
   }
 }
 
+let safe = true;
+
 async function getCertificateOnCurrentTab(details) {
   try {
     console.log('newcert - ' + JSON.stringify(details));
@@ -42,9 +44,18 @@ async function getCertificateOnCurrentTab(details) {
         if (san && san.hasOwnProperty('altNames')) {
           console.log('*Subject Alt Names: ' + JSON.stringify(san));
         }
-        let kidsRating = getX509Ext(x509.extensions, "1.2.3.4");
-        if (kidsRating) {
-          console.log('*kidsRating: ' + JSON.stringify(kidsRating));
+        let kidsRatingValue = getX509Ext(x509.extensions, "1.2.3.4");
+        if (kidsRatingValue) {
+          safe = true;
+          //console.log('value-kidsRating: ' + JSON.stringify(kidsRatingValue));
+          let kidsRating = kidsRatingValue.parsedValue.valueBlock.value;
+          console.log('**kidsRating: ' + kidsRating);
+        } else {
+          safe = false;
+
+          // warning notifications
+          // change symbol
+
         }
       }
     }
@@ -53,7 +64,47 @@ async function getCertificateOnCurrentTab(details) {
     console.error(error);
     throw error;
   }
-}
+};
+
+browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+  if (!changeInfo.url) {
+    return;
+  }
+  console.log("***safe? " + safe);
+  console.log(changeInfo.url);
+
+  //currentTab = tab;
+  console.log('updating icon for tab ' + tabId);
+  if (safe) {
+    browser.pageAction.setIcon({
+      tabId: tabId,
+      path: "icons/dyno_icon.png"
+    });
+    browser.pageAction.setTitle({
+      tabId: tabId,
+      title: "kidspro Npm"
+    });
+    browser.notifications.create({
+      type: "basic",
+      title: "KidsPro alert",
+      message: 'Hi you are visiting a website you are supposed to.'
+    });
+  } else {
+    browser.pageAction.setIcon({
+      tabId: tabId,
+      path: "icons/info_icon.png"
+    });
+    browser.pageAction.setTitle({
+      tabId: tabId,
+      title: "kidspro Npm - warning"
+    });
+    browser.notifications.create({
+      type: "basic",
+      title: "KidsPro alert",
+      message: 'Hi you are visiting a website you are supposed to.'
+    });
+  }
+});
 
 browser.webRequest.onHeadersReceived.addListener(
   details => {
@@ -61,7 +112,7 @@ browser.webRequest.onHeadersReceived.addListener(
   },
   { urls: ["<all_urls>"], types: ["main_frame"] },
   ["blocking"]
-)
+);
 
 browser.webRequest.onErrorOccurred.addListener(
   details => {
@@ -75,7 +126,6 @@ browser.webRequest.onErrorOccurred.addListener(
   },
   { urls: ['<all_urls>'] }
 );
-
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'GREETINGS') {
