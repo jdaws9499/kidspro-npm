@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>KidsPro - Settings</title>
+    <link rel="shortcut icon" href="icons/abc_icon.ico">
+    <link rel="stylesheet" href="./options.css" />
+</head>
+
+<body>
+    <!--<p>storage.managed birthdate: <b id="managed-bdate">no value found</b></p-->
+    <form>
+        <fieldset class="kidspro-fieldset">
+            <h2 class="kidspro-h2">Required User Setting</h2>
+            <p class="kidspro-legend">Please enter the following information to identify user's age. The information is stored in your Windows storage and in order to verificate the web site's certification but not shared anywhere else. </p>
+            <div class="kidspro-input">
+                <label title="Something to identify the user" for="nickname">Nickname:</label>
+                <input type="text" id="nickname" name="nickname" />
+            </div>
+            <div class="nativeDatePicker kidspro-input">
+                <label title="Birth date to identify the user's age to be used against certificate verification" for="bdate">Birth date:</label>
+                <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31" required
+                    pattern="\d{4}-\d{2}-\d{2}" required autofocus />
+            </div>
+            <div class="kidspro-input">
+                <label title="Age rating according to the user's birthdate" for="rating">Age Rating:</label>
+                <output name="rating" id="rating"/>
+            </div>
+        </fieldset>
+        <fieldset class="kidspro-fieldset">
+            <h2 class="kidspro-h2">Optional Settings</h2>
+            <p class="kidspro-legend">The following list enables to override the web sites' self declared age ratings. 
+                You can add urls to block although they are allowed for the user's age. Or you can add urls to allow although they are not allowed for the user's age.
+            </p>
+            <div class="kidspro-input">
+                <label title="These urls will be blocked from visiting regardless of the age rating of the site" for="blockedlist">Blocked urls (overriden):</label>
+                <input/>
+            </div>
+            <div class="kidspro-input">
+                <label title="These urls will be allowed to visit regardless of the age rating of the site" for="allowedlist">Allowed urls (overriden):</label>
+                <input/>
+            </div>
+        </fieldset>
+        <div class="action-container">
+            <button type="submit" class="primary">Save</button>
+        </div>
+    </form>
+    <script src="options.js"></script>
+</body>
+
+</html>

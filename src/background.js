@@ -98,12 +98,28 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       tabId: tabId,
       title: "kidspro Npm - warning"
     });
-    browser.notifications.create({
+    //browser.tabs.sendMessage(tabId, {action: "openWarningDialog"}, function(response) {}); 
+
+    /*browser.notifications.create('above rating', {
       type: "basic",
       title: "KidsPro alert",
       message: 'Hi you are visiting a website you are supposed to.'
-    });
+    });*/
   }
+});
+
+browser.runtime.onInstalled.addListener(() => {
+  // tracking badge text ON or OFF
+  console.log('new install');
+  /*browser.pageAction.setBadgeText({
+      text: "SAFE",
+  });*/
+  browser.notifications.create('above rating', {
+    type: "basic",
+    title: "KidsPro alert",
+    message: 'Hi you are visiting a website you are supposed to.'
+  });
+
 });
 
 browser.webRequest.onHeadersReceived.addListener(
@@ -140,3 +156,9 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
 });
+
+function handleClick() {
+  browser.runtime.openOptionsPage();
+}
+
+browser.browserAction.onClicked.addListener(handleClick);

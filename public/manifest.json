@@ -8,7 +8,12 @@
     "default_icon": "icons/dyno_icon.png",
     "default_title": "kidspro Npm",
     "default_popup": "popup.html",
-    "show_matches": ["https://*/*"]
+    "show_matches": [
+      "https://*/*"
+    ]
+  },
+  "browser_action": {
+    "default_title": "my favorite color"
   },
   "icons": {
     "16": "icons/abc_icon.png",
@@ -19,8 +24,12 @@
       "background.js"
     ]
   },
+  "options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  },
   "permissions": [
-    "activeTab", 
+    "activeTab",
     "storage",
     "notifications",
     "menus",
@@ -40,5 +49,11 @@
         "contentScript.js"
       ]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "kidspro-npm@mozilla.org",
+      "strict_min_version": "57.0a1"
+    }
+  }
 }

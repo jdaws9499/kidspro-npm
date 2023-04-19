@@ -1,0 +1,10 @@
+{
+    "name":  "kidspro-npm@mozilla.org",
+    "description": "ignored",
+    "type": "storage",
+    "data": {
+      "kidsProUser": "user related...",
+      "blocked_urls": [],
+      "allowed_urls": []
+    }
+  }

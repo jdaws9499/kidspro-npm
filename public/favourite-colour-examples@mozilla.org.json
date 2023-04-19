@@ -1,0 +1,8 @@
+{
+    "name": "favourite-colour-examples@mozilla.org",
+    "description": "ignored",
+    "type": "storage",
+    "data": {
+        "colour": "management thinks it should be blue!"
+    }
+}
