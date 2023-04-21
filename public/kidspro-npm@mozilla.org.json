@@ -3,8 +3,6 @@
     "description": "ignored",
     "type": "storage",
     "data": {
-      "kidsProUser": "user related...",
-      "blocked_urls": [],
-      "allowed_urls": []
+      "kidsProUser": "user related..."
     }
   }

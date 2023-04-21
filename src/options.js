@@ -7,14 +7,63 @@ function saveOptions(e) {
     let birthdate = Date.parse(document.querySelector("#bdate").value);
     console.log('birthdate:' + birthdate);
 
-
     browser.storage.sync.set({
         //nickname: document.querySelector("#nickname").value,
         //bdate: document.querySelector("#bdate").value,
         //rating: getRating(birthdate)
-        kidsProUser: { nickname: document.querySelector("#nickname").value, bdate: document.querySelector("#bdate").value, rating: getRating(birthdate) }
+        kidsProUser: {
+            nickname: document.querySelector("#nickname").value,
+            bdate: document.querySelector("#bdate").value,
+            rating: getRating(birthdate),
+            allowed: {
+                //urls: "[]"
+                urls :  document.querySelector("#allowedUrls").value || "[]"
+            }
+        },
+        /*blockedUrls: {
+            blockedUrls: document.querySelector("#blockedUrls").value
+        },*/
+        
     });
+
     e.preventDefault();
+}
+
+function displayAllowedItems(itemsStr) {
+    document.querySelector("output[name='allowedUrls']").value = itemsStr;
+    //document.querySelector("output[name='displayAllowed']").value = itemsStr;
+    console.log('value' + itemsStr);
+    console.log('display' + document.querySelector("#displayAllowed").value);
+    
+    let items = JSON.parse(itemsStr);
+    let html = "<hr/>";
+    if (items) {
+        for (let i=0; i<items.length; i++) {
+            html += items[i] + "<br/>";
+        }
+    } 
+    console.log('display - ' + html);
+    document.querySelector("#displayAllowed").innerHTML = html;
+    //document.pref.elements("allowedUrls").value = items;
+}
+
+function addAllowItem(e) {
+    //let allowedUrlData = browser.storage.sync.get('allowedUrlData');
+    console.log('addAllowItem');
+    let newItem = document.querySelector("#newAllowItem").value;
+    /*let allowedItems = [];
+    allowedUrlData.then((res) => {
+        allowedItems = res.urls;
+        allowedItems.push(newItem);
+    });*/
+    //let allowedUrls = document.querySelector("#allowedUrls").value;
+    //let allowedUrlsElement = document.getElementById("allowedUrls");
+    let urls = JSON.parse(document.querySelector("#allowedUrls").value);
+    urls.push(newItem);
+    document.querySelector("#newAllowItem").value = "";
+    displayAllowedItems(JSON.stringify(urls));
+    
+    saveOptions(e);
 }
 
 function getRating(birthday) {
@@ -67,15 +116,19 @@ function restoreOptions() {
         storageItem.then((res) => {
             document.querySelector("#managed-bdate").innerText = res.kidsProUser.bdate;
         });
-        
-        let gettingItem = browser.storage.sync.get('kidsProUser');
-        gettingItem.then((res) => {
+
+        let userData = browser.storage.sync.get('kidsProUser');
+        userData.then((res) => {
             document.querySelector("#nickname").value = res.kidsProUser.nickname || 'Not Set';
             //console.log('got date value ' + res.bdate + ":" + new Date(res.bdate));
             document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
             document.querySelector("#rating").value = res.kidsProUser.rating || 'Not Set';
+            //if (res.kidsProUser.allowed) {
+                displayAllowedItems(res.kidsProUser.allowed.urls);
+            //} else {
+              //  document.getElementById("allowedUrls").value = [];
+            //}
         });
-
 
     } catch (error) {
         console.error(error);
@@ -84,3 +137,4 @@ function restoreOptions() {
 }
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+document.querySelector("#addAllow").addEventListener("click", addAllowItem);

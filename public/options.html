@@ -12,7 +12,7 @@
 
 <body>
     <!--<p>storage.managed birthdate: <b id="managed-bdate">no value found</b></p-->
-    <form>
+    <form name="pref">
         <fieldset class="kidspro-fieldset">
             <h2 class="kidspro-h2">Required User Setting</h2>
             <p class="kidspro-legend">Please enter the following information to identify user's age. The information is stored in your Windows storage and in order to verificate the web site's certification but not shared anywhere else. </p>
@@ -38,10 +38,17 @@
             <div class="kidspro-input">
                 <label title="These urls will be blocked from visiting regardless of the age rating of the site" for="blockedlist">Blocked urls (overriden):</label>
                 <input/>
+                <!--<div id="blockedUrlsDisplay"/-->
             </div>
             <div class="kidspro-input">
                 <label title="These urls will be allowed to visit regardless of the age rating of the site" for="allowedlist">Allowed urls (overriden):</label>
-                <input/>
+                <input type="text" id="newAllowItem" name="newAllowItem"/>
+                <input type="button" id="addAllow" value="addAllow"/>
+                <output id="allowedUrls" name="allowedUrls"></output>
+                <div id="displayAllowed" name="displayAllowed"></div>
+                <!--<output type="hidden" id="allowedUrls" name="allowedUrls"/-->
+                <!--<div id="displayAllowed" name="displayAllowed"/-->
+                
             </div>
         </fieldset>
         <div class="action-container">
