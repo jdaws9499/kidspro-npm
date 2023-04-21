@@ -17,13 +17,13 @@ function saveOptions(e) {
             rating: getRating(birthdate),
             allowed: {
                 //urls: "[]"
-                urls :  document.querySelector("#allowedUrls").value || "[]"
+                urls: document.querySelector("#allowedUrls").value || "[]"
             }
         },
         /*blockedUrls: {
             blockedUrls: document.querySelector("#blockedUrls").value
         },*/
-        
+
     });
 
     e.preventDefault();
@@ -34,18 +34,37 @@ function displayAllowedItems(itemsStr) {
     //document.querySelector("output[name='displayAllowed']").value = itemsStr;
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayAllowed").value);
-    
+
     let items = JSON.parse(itemsStr);
-    let html = "<hr/>";
+    let html = "";
     if (items) {
-        for (let i=0; i<items.length; i++) {
-            html += items[i] + "<br/>";
+        for (let i = 0; i < items.length; i++) {
+            html += "<input type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i +"\">"
+            html += "</input>";
+            /*<input type="button" id="addAllow" value="addAllow"/>*/
+
+            html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
+
         }
-    } 
+    }
     console.log('display - ' + html);
     document.querySelector("#displayAllowed").innerHTML = html;
     //document.pref.elements("allowedUrls").value = items;
+    /*if (items) {
+        for (let i = 0; i < items.length; i++) {
+            document.querySelector("#deleteAllow_" + i ).addEventListener("click", deleteAllowItem(i));
+        }
+    }*/
 }
+
+function deleteAllowItem(i) {
+    console.log("deleteAllowItem");
+    let urls = JSON.parse(document.querySelector("#allowedUrls").value);
+    urls.splice(i, 1);
+    displayAllowedItems(JSON.stringify(urls));
+    //saveOptions(e);
+}
+
 
 function addAllowItem(e) {
     //let allowedUrlData = browser.storage.sync.get('allowedUrlData');
@@ -62,7 +81,7 @@ function addAllowItem(e) {
     urls.push(newItem);
     document.querySelector("#newAllowItem").value = "";
     displayAllowedItems(JSON.stringify(urls));
-    
+
     saveOptions(e);
 }
 
@@ -120,14 +139,9 @@ function restoreOptions() {
         let userData = browser.storage.sync.get('kidsProUser');
         userData.then((res) => {
             document.querySelector("#nickname").value = res.kidsProUser.nickname || 'Not Set';
-            //console.log('got date value ' + res.bdate + ":" + new Date(res.bdate));
             document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
             document.querySelector("#rating").value = res.kidsProUser.rating || 'Not Set';
-            //if (res.kidsProUser.allowed) {
-                displayAllowedItems(res.kidsProUser.allowed.urls);
-            //} else {
-              //  document.getElementById("allowedUrls").value = [];
-            //}
+            displayAllowedItems(res.kidsProUser.allowed.urls);
         });
 
     } catch (error) {

@@ -10,10 +10,11 @@
 
     /*border: none;*/
     /*font-size: 1em; */
-    display: block;
+    display: block; 
     border: none;
+    /*grid-auto-rows: 100px*/
+    
 }
-
 
 .kidspro-fieldset .kidspro-legend {
     /*html | h2*/
@@ -25,12 +26,53 @@
     color: #808080;
 }
 
+/*input[type="button"] {
+    grid-column: 4 / 6;
+}*/
+
 .kidspro-fieldset .kidspro-input {
     padding-block: 4px;
     padding-inline-start: 2rem;
     font-size: 15px !important;
     color: #808080;
+    display: grid;
+    grid-template-columns: 4fr 3fr 2fr 1fr;
+    column-gap: 10px;
+    row-gap: 15px;
+    justify-items: start;
 }
+
+label[for="nickname"], label[for="bdate"], label[for="rating"] {
+    grid-column: 1;
+}
+
+input[id="nickname"], input[id="bdate"] {
+    grid-column: 2;
+    place-self: stretch;
+}
+
+output[id="rating"] {
+    grid-column: 2;
+}
+
+label[for="allowedList"] {
+    grid-column: 1;
+}
+
+input[id="newAllowItem"], input[id="newBlockItem"]{
+    grid-column: 2 / span 2;
+    place-self: stretch;
+}
+
+input[type="button"] {
+    grid-column: 4;
+}
+
+input[id^="allowed_"], input[id^="blocked_"] {
+    grid-column: 1 / span 2;
+    place-self: stretch;
+}
+
 
 .button-container {
     margin-top: 15px;
