@@ -37,22 +37,22 @@
             </p>
             <div class="kidspro-input">
                 <label title="These urls will be blocked from visiting regardless of the age rating of the site" for="blockedlist">Blocked urls (overriden):</label>
-                <input/>
-                <!--<div id="blockedUrlsDisplay"/-->
+                <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*"/>
+                <input type="button" id="addBlock" value="Add"/>
+                <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
+                <div id="displayBlocked" name="displayBlocked"></div>
             </div>
             <div class="kidspro-input">
                 <label title="These urls will be allowed to visit regardless of the age rating of the site" for="allowedlist">Allowed urls (overriden):</label>
-                <input type="text" id="newAllowItem" name="newAllowItem"/>
+                <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"pattern="https://.*"/>
                 <input type="button" id="addAllow" value="Add"/>
                 <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
-                <div id="displayAllowed" name="displayAllowed"></div>
-                <!--<output type="hidden" id="allowedUrls" name="allowedUrls"/-->
-                <!--<div id="displayAllowed" name="displayAllowed"/-->
-                
+                <div id="displayAllowed" name="displayAllowed"></div>  
             </div>
         </fieldset>
         <div class="action-container">
-            <button type="submit" class="primary">Save</button>
+            <button type="submit" id="save" class="primary">Save</button>
+            <button type="reset" id="reset" class="secondary">Reset</button>
         </div>
     </form>
     <script src="options.js"></script>

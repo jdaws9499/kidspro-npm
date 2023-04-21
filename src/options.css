@@ -55,7 +55,7 @@ output[id="rating"] {
     grid-column: 2;
 }
 
-label[for="allowedList"] {
+label[for="allowedList"], label[for="blockedList"] {
     grid-column: 1;
 }
 
@@ -69,10 +69,13 @@ input[type="button"] {
 }
 
 input[id^="allowed_"], input[id^="blocked_"] {
-    grid-column: 1 / span 2;
+    grid-column: 2 / span 2;
     place-self: stretch;
 }
 
+output[type="hidden"] {
+    display: none;
+}
 
 .button-container {
     margin-top: 15px;
@@ -86,6 +89,21 @@ input[id^="allowed_"], input[id^="blocked_"] {
     font-size: 13px;
     line-height: 18.2px;
     color: #FBFBFE;
+
+    margin-right: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.secondary {
+    border-radius: 4px;
+    background-color: #e0e0e6;
+    padding: 4px 16px;
+    /*font-family: "SF Pro";*/
+    font-size: 13px;
+    line-height: 18.2px;
+    color: #1c1b22;
 
     margin-right: 4px;
     margin-left: 4px;

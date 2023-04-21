@@ -8,30 +8,47 @@ function saveOptions(e) {
     console.log('birthdate:' + birthdate);
 
     browser.storage.sync.set({
-        //nickname: document.querySelector("#nickname").value,
-        //bdate: document.querySelector("#bdate").value,
-        //rating: getRating(birthdate)
         kidsProUser: {
             nickname: document.querySelector("#nickname").value,
             bdate: document.querySelector("#bdate").value,
             rating: getRating(birthdate),
             allowed: {
-                //urls: "[]"
                 urls: document.querySelector("#allowedUrls").value || "[]"
+            }, 
+            blocked: {
+                urls: document.querySelector("#blockedUrls").value || "[]"
             }
-        },
-        /*blockedUrls: {
-            blockedUrls: document.querySelector("#blockedUrls").value
-        },*/
-
+        }
     });
 
     e.preventDefault();
+    location.reload();
+}
+
+function resetOptions(e) {
+    console.log('reset options');
+
+    browser.storage.sync.set({
+        kidsProUser: {
+            nickname: "",
+            bdate: "",
+            rating: "",
+            allowed: {
+                urls: "[]"
+            }, 
+            blocked: {
+                urls: "[]"
+            }
+        }
+    });
+
+    e.preventDefault();
+    location.reload();
 }
 
 function displayAllowedItems(itemsStr) {
     document.querySelector("output[name='allowedUrls']").value = itemsStr;
-    //document.querySelector("output[name='displayAllowed']").value = itemsStr;
+    
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayAllowed").value);
 
@@ -41,20 +58,31 @@ function displayAllowedItems(itemsStr) {
         for (let i = 0; i < items.length; i++) {
             html += "<input type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i +"\">"
             html += "</input>";
-            /*<input type="button" id="addAllow" value="addAllow"/>*/
-
-            html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
-
+           // html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
         }
     }
     console.log('display - ' + html);
     document.querySelector("#displayAllowed").innerHTML = html;
-    //document.pref.elements("allowedUrls").value = items;
-    /*if (items) {
+}
+
+function displayBlockedItems(itemsStr) {
+    document.querySelector("output[name='blockedUrls']").value = itemsStr;
+    console.log('value' + itemsStr);
+    console.log('display' + document.querySelector("#displayBlocked").value);
+
+    let items = JSON.parse(itemsStr);
+    let html = "";
+    if (items) {
         for (let i = 0; i < items.length; i++) {
-            document.querySelector("#deleteAllow_" + i ).addEventListener("click", deleteAllowItem(i));
+            html += "<input type=\"disabled\" value = " + items[i] + " id=\"blocked_" + i + "\" name=\"blocked_" + i +"\">"
+            html += "</input>";
+            
+            //html += "<input type=\"button\" id=\"deleteBlock_" + i + " name=\"deleteBlock_" + i + "\ value=\"Delete\"></input></br>";
+
         }
-    }*/
+    }
+    console.log('display - ' + html);
+    document.querySelector("#displayBlocked").innerHTML = html;
 }
 
 function deleteAllowItem(i) {
@@ -67,23 +95,27 @@ function deleteAllowItem(i) {
 
 
 function addAllowItem(e) {
-    //let allowedUrlData = browser.storage.sync.get('allowedUrlData');
     console.log('addAllowItem');
     let newItem = document.querySelector("#newAllowItem").value;
-    /*let allowedItems = [];
-    allowedUrlData.then((res) => {
-        allowedItems = res.urls;
-        allowedItems.push(newItem);
-    });*/
-    //let allowedUrls = document.querySelector("#allowedUrls").value;
-    //let allowedUrlsElement = document.getElementById("allowedUrls");
-    let urls = JSON.parse(document.querySelector("#allowedUrls").value);
+    let urls = JSON.parse(document.querySelector("#allowedUrls").value || "[]");
     urls.push(newItem);
     document.querySelector("#newAllowItem").value = "";
     displayAllowedItems(JSON.stringify(urls));
+    saveOptions(e);
+}
+
+function addBlockItem(e) {
+    console.log('addBlockItem');
+    let newItem = document.querySelector("#newBlockItem").value;
+    let urls = JSON.parse(document.querySelector("#blockedUrls").value || "[]");
+    urls.push(newItem);
+    document.querySelector("#newBlockItem").value = "";
+    displayBlockedItems(JSON.stringify(urls));
 
     saveOptions(e);
 }
+
+
 
 function getRating(birthday) {
     let age = calculateAge(birthday);
@@ -142,6 +174,7 @@ function restoreOptions() {
             document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
             document.querySelector("#rating").value = res.kidsProUser.rating || 'Not Set';
             displayAllowedItems(res.kidsProUser.allowed.urls);
+            displayBlockedItems(res.kidsProUser.blocked.urls);
         });
 
     } catch (error) {
@@ -151,4 +184,7 @@ function restoreOptions() {
 }
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItem);
+document.querySelector("#addBlock").addEventListener("click", addBlockItem);
+
