@@ -47,8 +47,6 @@ function resetOptions(e) {
 }
 
 function displayAllowedItems(itemsStr) {
-    document.querySelector("output[name='allowedUrls']").value = itemsStr;
-    
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayAllowed").value);
 
@@ -66,7 +64,6 @@ function displayAllowedItems(itemsStr) {
 }
 
 function displayBlockedItems(itemsStr) {
-    document.querySelector("output[name='blockedUrls']").value = itemsStr;
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayBlocked").value);
 
@@ -85,22 +82,16 @@ function displayBlockedItems(itemsStr) {
     document.querySelector("#displayBlocked").innerHTML = html;
 }
 
-function deleteAllowItem(i) {
-    console.log("deleteAllowItem");
-    let urls = JSON.parse(document.querySelector("#allowedUrls").value);
-    urls.splice(i, 1);
-    displayAllowedItems(JSON.stringify(urls));
-    //saveOptions(e);
-}
-
 
 function addAllowItem(e) {
     console.log('addAllowItem');
     let newItem = document.querySelector("#newAllowItem").value;
     let urls = JSON.parse(document.querySelector("#allowedUrls").value || "[]");
     urls.push(newItem);
+    //document.querySelector("output[name='allowedUrls']").value = JSON.stringify(urls);
+    document.querySelector("#allowedUrls").value = JSON.stringify(urls);
     document.querySelector("#newAllowItem").value = "";
-    displayAllowedItems(JSON.stringify(urls));
+    //displayAllowedItems(JSON.stringify(urls));
     saveOptions(e);
 }
 
@@ -109,15 +100,17 @@ function addBlockItem(e) {
     let newItem = document.querySelector("#newBlockItem").value;
     let urls = JSON.parse(document.querySelector("#blockedUrls").value || "[]");
     urls.push(newItem);
+    //displayBlockedItems(JSON.stringify(urls));
+    document.querySelector("#blockedUrls").value = JSON.stringify(urls);
     document.querySelector("#newBlockItem").value = "";
-    displayBlockedItems(JSON.stringify(urls));
-
+    
     saveOptions(e);
 }
 
 
 
 function getRating(birthday) {
+    
     let age = calculateAge(birthday);
     console.log('age: ' + age);
     let rating = 'NA';
@@ -141,9 +134,13 @@ function getRating(birthday) {
 }
 
 function calculateAge(birthday) { // birthday is a date
-    var ageDifMs = Date.now() - birthday;
-    var ageDate = new Date(ageDifMs); // miliseconds from epoch
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+    if (birthday) {
+        var ageDifMs = Date.now() - birthday;
+        var ageDate = new Date(ageDifMs); // miliseconds from epoch
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    } else {
+        return -1;
+    }
 }
 
 function getMinimumDate() {
@@ -173,6 +170,9 @@ function restoreOptions() {
             document.querySelector("#nickname").value = res.kidsProUser.nickname || 'Not Set';
             document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
             document.querySelector("#rating").value = res.kidsProUser.rating || 'Not Set';
+            document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.blocked.urls;
+            document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.allowed.urls;
+    
             displayAllowedItems(res.kidsProUser.allowed.urls);
             displayBlockedItems(res.kidsProUser.blocked.urls);
         });

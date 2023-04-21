@@ -21,8 +21,46 @@ function getX509Ext(extensions, id) {
 }
 
 let safe = true;
+const ratings = ['P', 'E', 'T', 'ET', 'LT'];
 
-async function getCertificateOnCurrentTab(details) {
+async function validateSite(details) {
+  const preference = await parsePreference();
+  const siteRating = await getCertificateRating(details);
+  console.log('**kidsRating: ' + siteRating);
+  //console.log('preference: ' + preference);
+  let ratingMatched = true;
+  let allowed = false;
+  let blocked = false;
+  let siteUrl = details.url.replace(/\/$/, "")
+  if (preference && siteRating) {
+    if (preference.rating && ratings.indexOf(preference.rating) > -1) {
+      ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
+    }
+
+    if (preference.allowedUrls) {
+      allowed = preference.allowedUrls.indexOf(siteUrl) > -1;
+    }
+
+    if (preference.blockedUrls) {
+      blocked = preference.blockedUrls.indexOf(siteUrl) > -1;
+    }
+
+    if (blocked) {
+      console.log('The site is in blocked list. Give us blocked page');
+      // block!
+    } else if (!ratingMatched) {
+      console.log('Site rating is higher than user rating. Give us warning');
+      // show warning
+      if (allowed) {
+        // allow
+        console.log('rating not matched but still allowed');
+      }
+    }
+  }
+
+}
+
+async function getCertificateRating(details) {
   try {
     console.log('newcert - ' + JSON.stringify(details));
     let securityInfo = await browser.webRequest.getSecurityInfo(
@@ -48,10 +86,12 @@ async function getCertificateOnCurrentTab(details) {
         if (kidsRatingValue) {
           safe = true;
           //console.log('value-kidsRating: ' + JSON.stringify(kidsRatingValue));
-          let kidsRating = kidsRatingValue.parsedValue.valueBlock.value;
-          console.log('**kidsRating: ' + kidsRating);
+          return kidsRatingValue.parsedValue.valueBlock.value;
+
         } else {
           safe = false;
+
+          return "NA";
 
           // warning notifications
           // change symbol
@@ -65,6 +105,19 @@ async function getCertificateOnCurrentTab(details) {
     throw error;
   }
 };
+
+function parsePreference() {
+  let userData = browser.storage.sync.get('kidsProUser');
+  let pref = {};
+  userData.then((res) => {
+    pref.rating = res.kidsProUser.rating;
+    pref.allowedUrls = res.kidsProUser.allowed.urls;
+    pref.blockedUrls = res.kidsProUser.blocked.urls;
+  });
+
+  console.log(pref);
+  return pref;
+}
 
 browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (!changeInfo.url) {
@@ -120,11 +173,13 @@ browser.runtime.onInstalled.addListener(() => {
     message: 'Hi you are visiting a website you are supposed to.'
   });
 
+  parsePreference();
+
 });
 
 browser.webRequest.onHeadersReceived.addListener(
   details => {
-    getCertificateOnCurrentTab(details);
+    validateSite(details);
   },
   { urls: ["<all_urls>"], types: ["main_frame"] },
   ["blocking"]
