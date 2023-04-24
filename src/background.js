@@ -21,7 +21,13 @@ function getX509Ext(extensions, id) {
 }
 
 let safe = true;
-const ratings = ['P', 'E', 'T', 'ET', 'LT'];
+let block = false;
+const ratings = [
+  'P', // 0-5
+  'E', // 6-9
+  'T', // 10-12
+  'ET', // 13-15
+  'LT']; // 16-17
 
 async function validateSite(details) {
   const preference = await parsePreference();
@@ -31,7 +37,10 @@ async function validateSite(details) {
   let ratingMatched = true;
   let allowed = false;
   let blocked = false;
-  let siteUrl = details.url.replace(/\/$/, "")
+  let siteUrl = new URL(details.url);
+  //let siteUrl = details.url.replace(/\/$/, "");
+  console.log('siteUrl origin - ' + siteUrl.origin);
+
   if (preference && siteRating) {
     if (preference.rating && ratings.indexOf(preference.rating) > -1) {
       ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
@@ -47,6 +56,10 @@ async function validateSite(details) {
 
     if (blocked) {
       console.log('The site is in blocked list. Give us blocked page');
+      safe = false;
+      block = true;
+      const redirectUrl = browser.runtime.getURL('index.html');
+      return redirectUrl;
       // block!
     } else if (!ratingMatched) {
       console.log('Site rating is higher than user rating. Give us warning');
@@ -54,10 +67,23 @@ async function validateSite(details) {
       if (allowed) {
         // allow
         console.log('rating not matched but still allowed');
+      } else {
+        // for under teens, they are blocked not just warning. 
+        if (preference.rating === 'P' || preference.rating === 'E') {
+          block = true;
+        }
+        safe = false;
       }
     }
   }
 
+}
+
+async function redirect(tabId, details) {
+  let redirectUrl = index.html;
+  browser.tabs.update(tabId, {
+    url: redirectUrl
+  });
 }
 
 async function getCertificateRating(details) {
@@ -124,8 +150,9 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
     return;
   }
   console.log("***safe? " + safe);
-  console.log(changeInfo.url);
-
+  console.log("***block?" + block);
+  console.log('changeInfo.url: ' + changeInfo.url);
+  
   //currentTab = tab;
   console.log('updating icon for tab ' + tabId);
   if (safe) {
@@ -142,6 +169,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       title: "KidsPro alert",
       message: 'Hi you are visiting a website you are supposed to.'
     });
+    safe = true;
   } else {
     browser.pageAction.setIcon({
       tabId: tabId,
@@ -151,6 +179,10 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       tabId: tabId,
       title: "kidspro Npm - warning"
     });
+    safe = false;
+
+    
+  
     //browser.tabs.sendMessage(tabId, {action: "openWarningDialog"}, function(response) {}); 
 
     /*browser.notifications.create('above rating', {
@@ -158,6 +190,18 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       title: "KidsPro alert",
       message: 'Hi you are visiting a website you are supposed to.'
     });*/
+  }
+
+  // "moz-extension://ceb46993-0319-4f9f-8a95-71be8495209f/index.html"
+  if (changeInfo.url.startsWith("moz-extension:")) {
+    return;
+  }
+  if (block) { // endless loop break..
+    const redirectUrl = browser.runtime.getURL('index.html');
+    browser.tabs.update(tabId, {
+      url: redirectUrl
+    });
+    block = false;
   }
 });
 

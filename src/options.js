@@ -7,6 +7,7 @@ function saveOptions(e) {
     let birthdate = Date.parse(document.querySelector("#bdate").value);
     console.log('birthdate:' + birthdate);
 
+    console.log('nickanme' + document.querySelector("#nickname").value);
     browser.storage.sync.set({
         kidsProUser: {
             nickname: document.querySelector("#nickname").value,
@@ -114,7 +115,7 @@ function getRating(birthday) {
     let age = calculateAge(birthday);
     console.log('age: ' + age);
     let rating = 'NA';
-    if (age) {
+    if (age > -1) {
         if (age <= 5) {
             rating = 'P';
         } else if (age <= 9) {
@@ -129,7 +130,8 @@ function getRating(birthday) {
         console.log('rating: ' + rating);
         return rating;
     } else {
-        throw new Error('cannot get rating from birthday - ' + birthday);
+        return 'NA';
+        //throw new Error('cannot get rating from birthday - ' + birthday);
     }
 }
 
@@ -167,9 +169,10 @@ function restoreOptions() {
 
         let userData = browser.storage.sync.get('kidsProUser');
         userData.then((res) => {
+            console.log('data ' + JSON.stringify(res.kidsProUser));
             document.querySelector("#nickname").value = res.kidsProUser.nickname || 'Not Set';
             document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
-            document.querySelector("#rating").value = res.kidsProUser.rating || 'Not Set';
+            document.querySelector("#rating").value = res.kidsProUser.rating || 'NA';
             document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.blocked.urls;
             document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.allowed.urls;
     
@@ -183,7 +186,7 @@ function restoreOptions() {
 
 }
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector("form").addEventListener("submit", saveOptions);
+document.querySelector("#save").addEventListener("click", saveOptions);
 document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItem);
 document.querySelector("#addBlock").addEventListener("click", addBlockItem);

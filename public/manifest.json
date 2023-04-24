@@ -55,5 +55,8 @@
       "id": "kidspro-npm@mozilla.org",
       "strict_min_version": "57.0a1"
     }
-  }
+  },
+  "web_accessible_resources": [
+    "blocked.html"
+  ]
 }
