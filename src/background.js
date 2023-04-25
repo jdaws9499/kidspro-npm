@@ -1,5 +1,7 @@
 import { Certificate } from 'pkijs';
 import * as asn1js from 'asn1js';
+const NodeCache = require("node-cache");
+const ratingCache = new NodeCache();
 //'use strict';
 
 // With background scripts you can communicate with popup
@@ -29,10 +31,18 @@ const ratings = [
   'ET', // 13-15
   'LT']; // 16-17
 
+const accessLevel = [
+  'A', // Allow
+  'W', // Allowed with warning
+  'B',  // Block, blocked because of the age
+  'BB', // Blocked from list
+  'AA', // Allowed from list 
+]
+
 async function validateSite(details) {
-  const preference = await parsePreference();
+  const preference = getPreference();
   const siteRating = await getCertificateRating(details);
-  console.log('**kidsRating: ' + siteRating);
+  
   //console.log('preference: ' + preference);
   let ratingMatched = true;
   let allowed = false;
@@ -40,51 +50,51 @@ async function validateSite(details) {
   let siteUrl = new URL(details.url);
   //let siteUrl = details.url.replace(/\/$/, "");
   console.log('siteUrl origin - ' + siteUrl.origin);
-
-  if (preference && siteRating) {
+  let siteAccess = 'A';
+  if (siteRating) {
+    console.log('**siteRating: ' + siteRating);
     if (preference.rating && ratings.indexOf(preference.rating) > -1) {
       ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
+      if (!ratingMatched) {
+        if (preference.rating === 'P' || preference.rating === 'E') {
+          siteAccess = 'B';
+        } else {
+          siteAccess = 'W';
+        }
+      }
     }
 
     if (preference.allowedUrls) {
-      allowed = preference.allowedUrls.indexOf(siteUrl) > -1;
+      allowed = preference.allowedUrls.indexOf(siteUrl.origin) > -1;
+      if (allowed) {
+        siteAccess = 'AA';
+      }
     }
 
     if (preference.blockedUrls) {
-      blocked = preference.blockedUrls.indexOf(siteUrl) > -1;
-    }
-
-    if (blocked) {
-      console.log('The site is in blocked list. Give us blocked page');
-      safe = false;
-      block = true;
-      const redirectUrl = browser.runtime.getURL('index.html');
-      return redirectUrl;
-      // block!
-    } else if (!ratingMatched) {
-      console.log('Site rating is higher than user rating. Give us warning');
-      // show warning
-      if (allowed) {
-        // allow
-        console.log('rating not matched but still allowed');
-      } else {
-        // for under teens, they are blocked not just warning. 
-        if (preference.rating === 'P' || preference.rating === 'E') {
-          block = true;
-        }
-        safe = false;
+      blocked = preference.blockedUrls.indexOf(siteUrl.origin) > -1;
+      if (blocked) {
+        siteAccess = 'BB';
       }
     }
+
+    console.log('siteAccess - ' + siteAccess);
+    ratingCache.set(siteUrl.origin, siteAccess, 10000);
+
+    const currentTab = await browser.tabs.getCurrent();
+    //let currentTab = await getCurrentTab();
+    if (currentTab) {
+      console.log("currentTab Id" + JSON.stringify(currentTab));
+    }
+    /*browser.runtime.sendMessage("handleSiteAccess", {
+      url: siteUrl,
+      siteAccess: siteAccess,
+      urlRating: siteRating,
+    });*/
   }
-
 }
 
-async function redirect(tabId, details) {
-  let redirectUrl = index.html;
-  browser.tabs.update(tabId, {
-    url: redirectUrl
-  });
-}
+//browser.runtime.onMessage.addListener(handleSiteAccess)
 
 async function getCertificateRating(details) {
   try {
@@ -110,18 +120,9 @@ async function getCertificateRating(details) {
         }
         let kidsRatingValue = getX509Ext(x509.extensions, "1.2.3.4");
         if (kidsRatingValue) {
-          safe = true;
-          //console.log('value-kidsRating: ' + JSON.stringify(kidsRatingValue));
           return kidsRatingValue.parsedValue.valueBlock.value;
-
         } else {
-          safe = false;
-
           return "NA";
-
-          // warning notifications
-          // change symbol
-
         }
       }
     }
@@ -132,76 +133,91 @@ async function getCertificateRating(details) {
   }
 };
 
-function parsePreference() {
-  let userData = browser.storage.sync.get('kidsProUser');
-  let pref = {};
-  userData.then((res) => {
-    pref.rating = res.kidsProUser.rating;
-    pref.allowedUrls = res.kidsProUser.allowed.urls;
-    pref.blockedUrls = res.kidsProUser.blocked.urls;
-  });
+async function getCurrentTab() {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  // `tab` will either be a `tabs.Tab` instance or `undefined`.
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
+}
 
-  console.log(pref);
+function getPreference() {
+  let preference =  ratingCache.get('preference');
+  if (!preference) {
+    preference = parsePreference();
+  }
+  console.log ('pref:' + JSON.stringify(preference));
+  return preference;
+}
+
+async function parsePreference() {
+  let userData = await browser.storage.sync.get('kidsProUser');
+  let pref = {};
+  if (userData) {
+    pref.rating = userData.kidsProUser.rating;
+    pref.allowedUrls = userData.kidsProUser.allowed.urls;
+    pref.blockedUrls = userData.kidsProUser.blocked.urls;
+  }
+
+  console.log('parsed preference');
+  ratingCache.set('preference', pref);
   return pref;
 }
 
+function redirect(tabId, url, siteRating) {
+  //console.log(`Redirecting: ${requestDetails.url}`);
+  const redirectUrl = browser.runtime.getURL('index.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteRating);
+  /*if (requestDetails.url === targetUrl) {
+    return;
+  }*/
+  
+  chrome.tabs.update(tabId, {
+    url: redirectUrl
+  });
+}
+
 browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-  if (!changeInfo.url) {
+  if (!changeInfo.url || changeInfo.url.startsWith("moz-extension:")) { // redirecting
     return;
   }
-  console.log("***safe? " + safe);
-  console.log("***block?" + block);
-  console.log('changeInfo.url: ' + changeInfo.url);
+
+  const originUrl = new URL(changeInfo.url).origin;
+  console.log('changeInfo.url.origin: ' + originUrl);
   
-  //currentTab = tab;
-  console.log('updating icon for tab ' + tabId);
-  if (safe) {
-    browser.pageAction.setIcon({
-      tabId: tabId,
-      path: "icons/dyno_icon.png"
-    });
-    browser.pageAction.setTitle({
-      tabId: tabId,
-      title: "kidspro Npm"
-    });
-    browser.notifications.create({
-      type: "basic",
-      title: "KidsPro alert",
-      message: 'Hi you are visiting a website you are supposed to.'
-    });
-    safe = true;
-  } else {
-    browser.pageAction.setIcon({
-      tabId: tabId,
-      path: "icons/info_icon.png"
-    });
-    browser.pageAction.setTitle({
-      tabId: tabId,
-      title: "kidspro Npm - warning"
-    });
-    safe = false;
-
-    
+  let siteAccess = ratingCache.get(originUrl);
+  if (siteAccess) {
+    console.log('found siteAccess: ' + siteAccess);
   
-    //browser.tabs.sendMessage(tabId, {action: "openWarningDialog"}, function(response) {}); 
+    //TODO cache site rating also
+    if (siteAccess === 'A' || siteAccess === 'AA') {
+      browser.pageAction.setIcon({
+        tabId: tabId,
+        path: "icons/dyno_icon.png"
+      });
+      browser.pageAction.setTitle({
+        tabId: tabId,
+        title: "kidspro Npm"
+      });
+    } 
 
-    /*browser.notifications.create('above rating', {
-      type: "basic",
-      title: "KidsPro alert",
-      message: 'Hi you are visiting a website you are supposed to.'
-    });*/
-  }
+    if (siteAccess === 'W') {
+      browser.notifications.create({
+        type: "basic",
+        title: "KidsPro alert",
+        message: 'Hi you are visiting a website you are not supposed to.'
+      });
+       browser.pageAction.setIcon({
+        tabId: tabId,
+        path: "icons/info_icon.png"
+      });
+      browser.pageAction.setTitle({
+        tabId: tabId,
+        title: "kidspro Npm - warning"
+      });
+    }
 
-  // "moz-extension://ceb46993-0319-4f9f-8a95-71be8495209f/index.html"
-  if (changeInfo.url.startsWith("moz-extension:")) {
-    return;
-  }
-  if (block) { // endless loop break..
-    const redirectUrl = browser.runtime.getURL('index.html');
-    browser.tabs.update(tabId, {
-      url: redirectUrl
-    });
-    block = false;
+    if (siteAccess === 'B' || siteAccess === 'BB') {
+      redirect(tabId, changeInfo.url, siteAccess);
+    }
   }
 });
 
