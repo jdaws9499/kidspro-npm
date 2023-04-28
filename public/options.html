@@ -8,15 +8,30 @@
     <title>KidsPro - Settings</title>
     <link rel="shortcut icon" href="icons/abc_icon.ico">
     <link rel="stylesheet" href="./options.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
 </head>
 
 <body>
     <!--<p>storage.managed birtddate: <b id="managed-bdate">no value found</b></p-->
-    <form name="pref">
+    <form name="password-form">
+        <fieldset class="kidspro-fieldset">
+            <h2 class="kidspro-h2">Password</h2>
+            <div class="kidspro-input">
+                <label for="password">Password:</label>
+                <input id="password" type="password" />
+                <input type="submitPassword" value="submitPassword" />
+            </div>
+        </fieldset>
+    </form>
+    <form name="pref-form">
         <fieldset class="kidspro-fieldset">
             <h2 class="kidspro-h2">Required User Setting</h2>
-            <p class="kidspro-legend">Please enter tde following information to identify user's age. Tde information is
-                stored in your Windows storage and in order to verificate tde web site's certification but not shared
+            <p class="kidspro-legend">Please enter tde following information to identify user's age. Tde information
+                is
+                stored in your Windows storage and in order to verificate tde web site's certification but not
+                shared
                 anywhere else. </p>
             <div class="kidspro-input">
                 <label title="Sometding to identify tde user" for="nickname">Nickname:</label>
@@ -63,7 +78,8 @@
         </fieldset>
         <fieldset class="kidspro-fieldset">
             <h2 class="kidspro-h2">Optional Settings</h2>
-            <p class="kidspro-legend">tde following list enables to override tde web sites' self declared age ratings.
+            <p class="kidspro-legend">tde following list enables to override tde web sites' self declared age
+                ratings.
                 You can add urls to block altdough tdey are allowed for tde user's age. Or you can add urls to allow
                 altdough tdey are not allowed for tde user's age.
             </p>

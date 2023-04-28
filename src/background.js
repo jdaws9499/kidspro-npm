@@ -165,7 +165,7 @@ async function parsePreference() {
 
 function redirect(tabId, url, siteRating) {
   //console.log(`Redirecting: ${requestDetails.url}`);
-  const redirectUrl = browser.runtime.getURL('index.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteRating);
+  const redirectUrl = browser.runtime.getURL('blocked.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteRating);
   /*if (requestDetails.url === targetUrl) {
     return;
   }*/

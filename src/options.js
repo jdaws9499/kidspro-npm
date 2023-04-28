@@ -55,7 +55,7 @@ function displayAllowedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<input type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i +"\">"
+            html += "<input class=\"col-lg-6\" type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i +"\">"
             html += "</input>";
            // html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
         }
