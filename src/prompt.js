@@ -12,6 +12,7 @@ function handleResponse(response) {
         window.close();
     } else {
         document.querySelector("#password").classList.add('is-invalid');
+        document.querySelector("#invalidPassword").classList.remove('d-none');
     }
 }
 
