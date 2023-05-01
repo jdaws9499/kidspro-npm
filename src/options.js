@@ -2,7 +2,26 @@
 
 import './options.css';
 
-function saveOptions(e) {
+const adminPass = '';
+let validated = false;
+
+function promptAdminPassword(action) {
+    browser.windows.create(
+        {
+            url: 'prompt.html?action=' + encodeURIComponent(action),
+            type: 'popup',
+            height: 200,
+            width: 600
+        }
+    );
+}
+
+async function saveOptionsWithPrompt(e) {
+    promptAdminPassword("saveOptions");
+    e.preventDefault();
+}
+
+async function saveOptions(e) {
     console.log('bday typed value: ' + document.querySelector("#bdate").value);
     let birthdate = Date.parse(document.querySelector("#bdate").value);
     console.log('birthdate:' + birthdate);
@@ -12,17 +31,16 @@ function saveOptions(e) {
         kidsProUser: {
             nickname: document.querySelector("#nickname").value,
             bdate: document.querySelector("#bdate").value,
+            adminPass: 'password',
             rating: getRating(birthdate),
             allowed: {
                 urls: document.querySelector("#allowedUrls").value || "[]"
-            }, 
+            },
             blocked: {
                 urls: document.querySelector("#blockedUrls").value || "[]"
             }
         }
     });
-
-    e.preventDefault();
     location.reload();
 }
 
@@ -34,9 +52,10 @@ function resetOptions(e) {
             nickname: "",
             bdate: "",
             rating: "",
+            adminPass: adminPass,
             allowed: {
                 urls: "[]"
-            }, 
+            },
             blocked: {
                 urls: "[]"
             }
@@ -55,9 +74,9 @@ function displayAllowedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<input class=\"col-lg-6\" type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i +"\">"
+            html += "<input class=\"col-lg-6\" type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i + "\">"
             html += "</input>";
-           // html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
+            // html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
         }
     }
     console.log('display - ' + html);
@@ -72,9 +91,9 @@ function displayBlockedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<input type=\"disabled\" value = " + items[i] + " id=\"blocked_" + i + "\" name=\"blocked_" + i +"\">"
+            html += "<input type=\"disabled\" value = " + items[i] + " id=\"blocked_" + i + "\" name=\"blocked_" + i + "\">"
             html += "</input>";
-            
+
             //html += "<input type=\"button\" id=\"deleteBlock_" + i + " name=\"deleteBlock_" + i + "\ value=\"Delete\"></input></br>";
 
         }
@@ -104,14 +123,14 @@ function addBlockItem(e) {
     //displayBlockedItems(JSON.stringify(urls));
     document.querySelector("#blockedUrls").value = JSON.stringify(urls);
     document.querySelector("#newBlockItem").value = "";
-    
+
     saveOptions(e);
 }
 
 
 
 function getRating(birthday) {
-    
+
     let age = calculateAge(birthday);
     console.log('age: ' + age);
     let rating = 'NA';
@@ -175,7 +194,7 @@ function restoreOptions() {
             document.querySelector("#rating").value = res.kidsProUser.rating || 'NA';
             document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.blocked.urls;
             document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.allowed.urls;
-    
+            Object.assign(adminPass, res.kidsProUser.adminPass);
             displayAllowedItems(res.kidsProUser.allowed.urls);
             displayBlockedItems(res.kidsProUser.blocked.urls);
         });
@@ -185,9 +204,18 @@ function restoreOptions() {
     }
 
 }
+
+browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log('options.js received a message- ' + JSON.stringify(request));
+
+    if (request.type === 'action') {
+        if (request.message === 'saveOptions') {
+            saveOptions();
+        }
+    }  
+})
+
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector("#save").addEventListener("click", saveOptions);
+document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
 document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItem);
-document.querySelector("#addBlock").addEventListener("click", addBlockItem);
-

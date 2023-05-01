@@ -12,7 +12,8 @@ const config = (env, argv) =>
       popup: PATHS.src + '/popup.js',
       contentScript: PATHS.src + '/contentScript.js',
       background: PATHS.src + '/background.js',
-      options: PATHS.src + '/options.js'
+      options: PATHS.src + '/options.js',
+      prompt: PATHS.src + '/prompt.js'
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
   });

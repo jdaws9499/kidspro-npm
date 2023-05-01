@@ -42,7 +42,7 @@ const accessLevel = [
 async function validateSite(details) {
   const preference = getPreference();
   const siteRating = await getCertificateRating(details);
-  
+
   //console.log('preference: ' + preference);
   let ratingMatched = true;
   let allowed = false;
@@ -141,12 +141,21 @@ async function getCurrentTab() {
 }
 
 function getPreference() {
-  let preference =  ratingCache.get('preference');
+  let preference = ratingCache.get('preference');
   if (!preference) {
     preference = parsePreference();
   }
-  console.log ('pref:' + JSON.stringify(preference));
+  console.log('pref:' + JSON.stringify(preference));
   return preference;
+}
+
+async function getAdminPassword() {
+  let userData = await browser.storage.sync.get('kidsProUser');
+  let pass = '';
+  if (userData) {
+    pass = userData.kidsProUser.adminPass;
+  }
+  return pass;
 }
 
 async function parsePreference() {
@@ -169,7 +178,7 @@ function redirect(tabId, url, siteRating) {
   /*if (requestDetails.url === targetUrl) {
     return;
   }*/
-  
+
   chrome.tabs.update(tabId, {
     url: redirectUrl
   });
@@ -182,11 +191,11 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 
   const originUrl = new URL(changeInfo.url).origin;
   console.log('changeInfo.url.origin: ' + originUrl);
-  
+
   let siteAccess = ratingCache.get(originUrl);
   if (siteAccess) {
     console.log('found siteAccess: ' + siteAccess);
-  
+
     //TODO cache site rating also
     if (siteAccess === 'A' || siteAccess === 'AA') {
       browser.pageAction.setIcon({
@@ -197,7 +206,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
         tabId: tabId,
         title: "kidspro Npm"
       });
-    } 
+    }
 
     if (siteAccess === 'W') {
       browser.notifications.create({
@@ -205,7 +214,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
         title: "KidsPro alert",
         message: 'Hi you are visiting a website you are not supposed to.'
       });
-       browser.pageAction.setIcon({
+      browser.pageAction.setIcon({
         tabId: tabId,
         path: "icons/info_icon.png"
       });
@@ -259,6 +268,7 @@ browser.webRequest.onErrorOccurred.addListener(
 );
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('backgrounds.js received a message- ' + JSON.stringify(request));
   if (request.type === 'GREETINGS') {
     const message = `Hi ${sender.tab ? 'Con' : 'Pop'
       }, my name is Bac. I am from Background. It's great to hear from you.`;
@@ -269,6 +279,20 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({
       message,
     });
+    return true;
+  } else if (request.type === 'verifyPassword') {
+    const getP = getAdminPassword();
+    getP.then( function(password) {
+      if (password === request.password) {
+        // ok.
+        console.log('match!');
+        sendResponse({message: "success"});
+      } else {
+        console.log('fail!');
+        sendResponse({message: "fail"});
+      }
+    });
+    return true;
   }
 });
 
@@ -276,4 +300,5 @@ function handleClick() {
   browser.runtime.openOptionsPage();
 }
 
+FUNCTION
 browser.browserAction.onClicked.addListener(handleClick);
