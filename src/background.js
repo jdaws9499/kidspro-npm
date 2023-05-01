@@ -300,5 +300,4 @@ function handleClick() {
   browser.runtime.openOptionsPage();
 }
 
-FUNCTION
 browser.browserAction.onClicked.addListener(handleClick);

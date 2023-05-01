@@ -6,6 +6,11 @@ My Chrome Extension
 
 - Feature 1
 - Feature 2
+- Password encoded 
+- Time restrictions (day and time)
+- Monitoring (which blocked sites the kids visited)
+- Have password up front
+- CSS of the existing pages (blocked page can be for children and teens separately, do it in SUMMER)
 
 ## Install
 

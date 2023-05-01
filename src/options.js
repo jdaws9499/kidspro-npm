@@ -2,8 +2,7 @@
 
 import './options.css';
 
-const adminPass = '';
-let validated = false;
+let adminPass = '';
 
 function promptAdminPassword(action) {
     browser.windows.create(
@@ -21,7 +20,7 @@ async function saveOptionsWithPrompt(e) {
     e.preventDefault();
 }
 
-async function saveOptions(e) {
+async function saveOptions() {
     console.log('bday typed value: ' + document.querySelector("#bdate").value);
     let birthdate = Date.parse(document.querySelector("#bdate").value);
     console.log('birthdate:' + birthdate);
@@ -31,7 +30,7 @@ async function saveOptions(e) {
         kidsProUser: {
             nickname: document.querySelector("#nickname").value,
             bdate: document.querySelector("#bdate").value,
-            adminPass: 'password',
+            adminPass: adminPass,
             rating: getRating(birthdate),
             allowed: {
                 urls: document.querySelector("#allowedUrls").value || "[]"
@@ -44,9 +43,13 @@ async function saveOptions(e) {
     location.reload();
 }
 
-function resetOptions(e) {
-    console.log('reset options');
+async function resetOptionsWithPrompt(e) {
+    promptAdminPassword("resetOptions");
+    e.preventDefault();
+}
 
+function resetOptions() {
+    console.log('reset options');
     browser.storage.sync.set({
         kidsProUser: {
             nickname: "",
@@ -61,8 +64,6 @@ function resetOptions(e) {
             }
         }
     });
-
-    e.preventDefault();
     location.reload();
 }
 
@@ -102,8 +103,12 @@ function displayBlockedItems(itemsStr) {
     document.querySelector("#displayBlocked").innerHTML = html;
 }
 
+async function addAllowItemWithPrompt(e) {
+    promptAdminPassword("addAllowItem");
+    e.preventDefault();
+}
 
-function addAllowItem(e) {
+function addAllowItem() {
     console.log('addAllowItem');
     let newItem = document.querySelector("#newAllowItem").value;
     let urls = JSON.parse(document.querySelector("#allowedUrls").value || "[]");
@@ -112,10 +117,15 @@ function addAllowItem(e) {
     document.querySelector("#allowedUrls").value = JSON.stringify(urls);
     document.querySelector("#newAllowItem").value = "";
     //displayAllowedItems(JSON.stringify(urls));
-    saveOptions(e);
+    saveOptions();
 }
 
-function addBlockItem(e) {
+async function addBlockItemWithPrompt(e) {
+    promptAdminPassword("addBlockItem");
+    e.preventDefault();
+}
+
+function addBlockItem() {
     console.log('addBlockItem');
     let newItem = document.querySelector("#newBlockItem").value;
     let urls = JSON.parse(document.querySelector("#blockedUrls").value || "[]");
@@ -123,8 +133,7 @@ function addBlockItem(e) {
     //displayBlockedItems(JSON.stringify(urls));
     document.querySelector("#blockedUrls").value = JSON.stringify(urls);
     document.querySelector("#newBlockItem").value = "";
-
-    saveOptions(e);
+    saveOptions();
 }
 
 
@@ -202,7 +211,6 @@ function restoreOptions() {
     } catch (error) {
         console.error(error);
     }
-
 }
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -211,11 +219,23 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === 'action') {
         if (request.message === 'saveOptions') {
             saveOptions();
+        } else if (request.message === 'resetOptions') {
+            resetOptions();
+        } else if (request.message === 'addAllowItem') {
+            addAllowItem();
+        } else if (request.message === 'addBlockItem') {
+            addBlockItem();
+        } else if (request.message === 'restoreOptions') {
+            restoreOptions();
+        } else {
+            console.error('invalida action');
         }
+        reloadPageWithHash();
     }  
 })
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
-document.querySelector("#reset").addEventListener("click", resetOptions);
-document.querySelector("#addAllow").addEventListener("click", addAllowItem);
+document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
+document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
+document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
