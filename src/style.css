@@ -1,0 +1,57 @@
+
+.kidspro-fieldset .kidspro-legend {
+
+    font-size: 15px !important;
+    color: #808080;
+}
+
+.kidspro-fieldset .kidspro-input {
+    padding-block: 4px;
+    padding-inline-start: 2rem;
+    font-size: 15px !important;
+    color: #808080;
+    display: grid;
+    grid-template-columns: 4fr 3fr 2fr 1fr;
+    column-gap: 10px;
+    row-gap: 15px;
+    justify-items: start;
+}
+
+.button-container {
+    margin-top: 15px;
+}
+
+.primary {
+    border-radius: 4px;
+    background-color: #0060DF;
+    padding: 4px 16px;
+    /*font-family: "SF Pro";*/
+    font-size: 13px;
+    line-height: 18.2px;
+    color: #FBFBFE;
+
+    margin-right: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.secondary {
+    border-radius: 4px;
+    background-color: #e0e0e6;
+    padding: 4px 16px;
+    /*font-family: "SF Pro";*/
+    font-size: 13px;
+    line-height: 18.2px;
+    color: #1c1b22;
+
+    margin-right: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+output[type="hidden"] {
+    display: none;
+}

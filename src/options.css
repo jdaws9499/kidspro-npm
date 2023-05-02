@@ -1,3 +1,5 @@
+@import "style.css";
+
 .favicon-overlay {
     all: initial !important;
     position: fixed !important;
@@ -6,41 +8,6 @@
     z-index: 9999 !important;
 }
 
-.kidspro-fieldset {
-
-    /*border: none;*/
-    /*font-size: 1em; */
-    display: block; 
-    border: none;
-    /*grid-auto-rows: 100px*/
-    
-}
-
-.kidspro-fieldset .kidspro-legend {
-    /*html | h2*/
-    /*font-weight: 600;
-    line-height: 1.4em;*/
-
-    font-size: 15px !important;
-    padding-bottom: 0;
-    color: #808080;
-}
-
-/*input[type="button"] {
-    grid-column: 4 / 6;
-}*/
-
-.kidspro-fieldset .kidspro-input {
-    padding-block: 4px;
-    padding-inline-start: 2rem;
-    font-size: 15px !important;
-    color: #808080;
-    display: grid;
-    grid-template-columns: 4fr 3fr 2fr 1fr;
-    column-gap: 10px;
-    row-gap: 15px;
-    justify-items: start;
-}
 
 label[for="nickname"], label[for="bdate"], label[for="rating"] {
     grid-column: 1;
@@ -73,43 +40,6 @@ input[id^="allowed_"], input[id^="blocked_"] {
     place-self: stretch;
 }
 
-output[type="hidden"] {
-    display: none;
-}
-
-.button-container {
-    margin-top: 15px;
-}
-
-.primary {
-    border-radius: 4px;
-    background-color: #0060DF;
-    padding: 4px 16px;
-    /*font-family: "SF Pro";*/
-    font-size: 13px;
-    line-height: 18.2px;
-    color: #FBFBFE;
-
-    margin-right: 4px;
-    margin-left: 4px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.secondary {
-    border-radius: 4px;
-    background-color: #e0e0e6;
-    padding: 4px 16px;
-    /*font-family: "SF Pro";*/
-    font-size: 13px;
-    line-height: 18.2px;
-    color: #1c1b22;
-
-    margin-right: 4px;
-    margin-left: 4px;
-    cursor: pointer;
-    text-decoration: none;
-}
 
 /*.button {
     color: #0060df;

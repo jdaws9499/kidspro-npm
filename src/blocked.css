@@ -1,3 +1,5 @@
+@import "style.css";
+
 /**
 1. Use bright colors
 2. Use characters
@@ -9,23 +11,6 @@
 8. Use video and games
 9. Include printable elements
 */
-.favicon-overlay {
-    all: initial !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 9999 !important;
-}
-
-.kidspro-fieldset {
-
-    /*border: none;*/
-    /*font-size: 1em; */
-    display: block;
-    border: none;
-    /*grid-auto-rows: 100px*/
-
-}
 
 img {
     border-radius: 8px;
