@@ -3,6 +3,7 @@
     "description": "ignored",
     "type": "storage",
     "data": {
-      "kidsProUser": "user related..."
+      "kidsProUser": "user related...",
+      "kidsProAdmin": "adin related...."
     }
   }

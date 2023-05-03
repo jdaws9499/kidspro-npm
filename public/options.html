@@ -17,23 +17,23 @@
         <form name="pref-form">
             <fieldset class="kidspro-fieldset mt-2">
                 <h2 class="kidspro-h2">Required User Setting</h2>
-                <p class="kidspro-legend">Please enter tde following information to identify user's age. Tde information
+                <p class="kidspro-legend">Please enter the following information to identify user's age. The information
                     is
-                    stored in your Windows storage and in order to verificate tde web site's certification but not
+                    stored in your Windows storage and in order to verificate the web site's certification but not
                     shared
                     anywhere else. </p>
                 <div class="kidspro-input">
-                    <label title="Sometding to identify tde user" for="nickname">Nickname:</label>
+                    <label title="Sometding to identify the user" for="nickname">Nickname:</label>
                     <input type="text" id="nickname" name="nickname" />
                 </div>
                 <div class="nativeDatePicker kidspro-input">
-                    <label title="Birtd date to identify tde user's age to be used against certificate verification"
+                    <label title="Birth date to identify the user's age to be used against certificate verification"
                         for="bdate">Birtddate:</label>
                     <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31" required
                         pattern="\d{4}-\d{2}-\d{2}" required autofocus />
                 </div>
                 <div class="kidspro-input">
-                    <label title="Age rating according to tde user's birtddate" for="rating">Age rating:</label>
+                    <label title="Age rating according to the user's birtddate" for="rating">Age rating:</label>
                     <output name="rating" id="rating" />
                 </div>
                 <div>
@@ -67,13 +67,13 @@
             </fieldset>
             <fieldset class="kidspro-fieldset mt-3">
                 <h2 class="kidspro-h2">Optional Settings</h2>
-                <p class="kidspro-legend">tde following list enables to override tde web sites' self declared age
+                <p class="kidspro-legend">The following list enables to override the web sites' self declared age
                     ratings.
-                    You can add urls to block altdough tdey are allowed for tde user's age. Or you can add urls to allow
-                    altdough tdey are not allowed for tde user's age.
+                    You can add urls to block altdough they are allowed for the user's age. Or you can add urls to allow
+                    altdough they are not allowed for the user's age.
                 </p>
                 <div class="kidspro-input">
-                    <label title="Tdese urls will be blocked from visiting regardless of tde age rating of tde site"
+                    <label title="These urls will be blocked from visiting regardless of the age rating of the site"
                         for="blockedlist">Blocked urls (overriden):</label>
                     <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*" />
                     <input type="button" id="addBlock" value="Add" />
@@ -81,13 +81,14 @@
                     <div id="displayBlocked" name="displayBlocked"></div>
                 </div>
                 <div class="kidspro-input">
-                    <label title="Tdese urls will be allowed to visit regardless of tde age rating of tde site"
+                    <label title="These urls will be allowed to visit regardless of the age rating of the site"
                         for="allowedlist">Allowed urls (overriden):</label>
                     <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
                         pattern="https://.*" />
                     <input type="button" id="addAllow" value="Add" />
                     <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
                     <div id="displayAllowed" name="displayAllowed"></div>
+                    <output type="hidden" id="password" name="password"></output>
                 </div>
             </fieldset>
             <div class="action-container">

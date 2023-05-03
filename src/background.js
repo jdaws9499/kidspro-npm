@@ -153,20 +153,41 @@ async function getAdminPassword() {
   let userData = await browser.storage.sync.get('kidsProUser');
   let pass = '';
   if (userData) {
-    pass = userData.kidsProUser.adminPass;
+    pass = userData.kidsProUser.admin.password;
   }
   return pass;
+}
+
+async function saveAdminPassword(password) {
+  let userData = await browser.storage.sync.get('kidsProUser');
+  if (userData) {
+    let pref = userData.kidsProUser.preference;
+    let saved = await browser.storage.sync.set({
+      kidsProUser: {
+        preference: pref,
+        admin: {
+          password: password
+        }
+      }
+    });
+    if (saved) {
+      return true;
+    }
+  }
 }
 
 async function parsePreference() {
   let userData = await browser.storage.sync.get('kidsProUser');
   let pref = {};
   if (userData) {
-    pref.rating = userData.kidsProUser.rating;
-    pref.allowedUrls = userData.kidsProUser.allowed.urls;
-    pref.blockedUrls = userData.kidsProUser.blocked.urls;
+    pref.rating = userData.kidsProUser.preference.rating;
+    if (userData.data.kidsProUser.preference.allowed) {
+      pref.allowedUrls = userData.kidsProUser.preference.allowed.urls;
+    }
+    if (userData.data.kidsProUser.preference.blocked) {
+      pref.blockedUrls = userData.kidsProUser.preference.blocked.urls;
+    }
   }
-
   console.log('parsed preference');
   ratingCache.set('preference', pref);
   return pref;
@@ -282,17 +303,23 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   } else if (request.type === 'verifyPassword') {
     const getP = getAdminPassword();
-    getP.then( function(password) {
+    getP.then(function (password) {
       if (password === request.password) {
         // ok.
         console.log('match!');
-        sendResponse({message: "success"});
+        sendResponse({ message: "success" });
       } else {
         console.log('fail!');
-        sendResponse({message: "fail"});
+        sendResponse({ message: "fail" });
       }
     });
     return true;
+  } else if (request.type === 'storePassword') {
+    const saveP = saveAdminPassword(request.password);
+    saveP.then(function (result) {
+      console.log('save result - ' + result);
+      sendResponse({ message: "success" });
+    });
   }
 });
 

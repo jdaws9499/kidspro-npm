@@ -5,6 +5,7 @@ import './options.css';
 let adminPass = '';
 
 function promptAdminPassword(action) {
+
     browser.windows.create(
         {
             url: 'prompt.html?action=' + encodeURIComponent(action),
@@ -15,8 +16,20 @@ function promptAdminPassword(action) {
     );
 }
 
+function createAdminPassword() {
+    browser.windows.create(
+        {
+            url: 'createPassword.html',
+            type: 'popup',
+            height: 400,
+            width: 600
+        }
+    );
+}
+
 async function saveOptionsWithPrompt(e) {
-    promptAdminPassword("saveOptions");
+    createAdminPassword();
+    //promptAdminPassword("saveOptions");
     e.preventDefault();
 }
 
@@ -28,15 +41,20 @@ async function saveOptions() {
     console.log('nickanme' + document.querySelector("#nickname").value);
     browser.storage.sync.set({
         kidsProUser: {
-            nickname: document.querySelector("#nickname").value,
-            bdate: document.querySelector("#bdate").value,
-            adminPass: adminPass,
-            rating: getRating(birthdate),
-            allowed: {
-                urls: document.querySelector("#allowedUrls").value || "[]"
+            preference: {
+                nickname: document.querySelector("#nickname").value,
+                bdate: document.querySelector("#bdate").value,
+                //adminPass: adminPass,
+                rating: getRating(birthdate),
+                allowed: {
+                    urls: document.querySelector("#allowedUrls").value || "[]"
+                },
+                blocked: {
+                    urls: document.querySelector("#blockedUrls").value || "[]"
+                }
             },
-            blocked: {
-                urls: document.querySelector("#blockedUrls").value || "[]"
+            admin: {
+                password: document.querySelector("#password").value || ""
             }
         }
     });
@@ -52,15 +70,20 @@ function resetOptions() {
     console.log('reset options');
     browser.storage.sync.set({
         kidsProUser: {
-            nickname: "",
-            bdate: "",
-            rating: "",
-            adminPass: adminPass,
-            allowed: {
-                urls: "[]"
+            preference: {
+                nickname: "",
+                bdate: "",
+                rating: "",
+                //adminPass: adminPass,
+                allowed: {
+                    urls: "[]"
+                },
+                blocked: {
+                    urls: "[]"
+                }
             },
-            blocked: {
-                urls: "[]"
+            admin: {
+                password: document.querySelector("#password").value || ""
             }
         }
     });
@@ -186,6 +209,7 @@ function getMinimumDate() {
     return minDate;
 }
 
+
 function restoreOptions() {
     try {
         console.log('restoreOptions');
@@ -198,14 +222,18 @@ function restoreOptions() {
         let userData = browser.storage.sync.get('kidsProUser');
         userData.then((res) => {
             console.log('data ' + JSON.stringify(res.kidsProUser));
-            document.querySelector("#nickname").value = res.kidsProUser.nickname || 'Not Set';
-            document.querySelector("#bdate").value = res.kidsProUser.bdate || getMinimumDate;
-            document.querySelector("#rating").value = res.kidsProUser.rating || 'NA';
-            document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.blocked.urls;
-            document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.allowed.urls;
-            Object.assign(adminPass, res.kidsProUser.adminPass);
-            displayAllowedItems(res.kidsProUser.allowed.urls);
-            displayBlockedItems(res.kidsProUser.blocked.urls);
+            document.querySelector("#nickname").value = res.kidsProUser.preference.nickname || 'Not Set';
+            document.querySelector("#bdate").value = res.kidsProUser.preference.bdate || getMinimumDate;
+            document.querySelector("#rating").value = res.kidsProUser.preference.rating || 'NA';
+            if (res.kidsProUser.preference.blocked) {
+                document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.preference.blocked.urls;
+                displayBlockedItems(res.kidsProUser.preference.blocked.urls);
+            }
+            if (res.kidsProUser.preference.allowed) {
+                document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
+                displayAllowedItems(res.kidsProUser.preference.allowed.urls);
+            }
+            document.querySelector("output[name='password'").value = res.kidsProUser.admin.password;
         });
 
     } catch (error) {
@@ -231,11 +259,13 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.error('invalida action');
         }
         reloadPageWithHash();
-    }  
+    }
 })
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
-document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
+//document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
+//document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
+document.querySelector("#save").addEventListener("click", saveOptions);
+document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
 document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);

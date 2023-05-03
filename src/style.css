@@ -6,15 +6,15 @@
 }
 
 .kidspro-fieldset .kidspro-input {
-    padding-block: 4px;
+    /*padding-block: 4px;
     padding-inline-start: 2rem;
-    font-size: 15px !important;
+    font-size: 15px !important;*/
     color: #808080;
-    display: grid;
+    /*display: grid;
     grid-template-columns: 4fr 3fr 2fr 1fr;
     column-gap: 10px;
     row-gap: 15px;
-    justify-items: start;
+    justify-items: start;*/
 }
 
 .button-container {

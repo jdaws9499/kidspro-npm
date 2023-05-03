@@ -13,7 +13,8 @@ const config = (env, argv) =>
       contentScript: PATHS.src + '/contentScript.js',
       background: PATHS.src + '/background.js',
       options: PATHS.src + '/options.js',
-      prompt: PATHS.src + '/prompt.js'
+      prompt: PATHS.src + '/prompt.js',
+      createPassword: PATHS.src + '/createPassword.js'
     },
     devtool: argv.mode === 'production' ? false : 'source-map',
   });
