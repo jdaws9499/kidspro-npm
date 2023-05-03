@@ -26,7 +26,7 @@ function validate(e) {
             type: 'storePassword',
             password: document.querySelector("#password").value
         });
-    sending.then(handleResponse, handleError);
+    setTimeout(sending.then(handleResponse, handleError), 3000);
 }
 
 document.querySelector("form").addEventListener("submit", validate);

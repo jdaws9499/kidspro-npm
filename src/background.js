@@ -1,6 +1,7 @@
 import { Certificate } from 'pkijs';
 import * as asn1js from 'asn1js';
 const NodeCache = require("node-cache");
+const bcrypt = require("bcryptjs");
 const ratingCache = new NodeCache();
 //'use strict';
 
@@ -159,20 +160,28 @@ async function getAdminPassword() {
 }
 
 async function saveAdminPassword(password) {
-  let userData = await browser.storage.sync.get('kidsProUser');
-  if (userData) {
-    let pref = userData.kidsProUser.preference;
-    let saved = await browser.storage.sync.set({
-      kidsProUser: {
-        preference: pref,
-        admin: {
-          password: password
+  try {
+    let hashValue = await bcrypt.hash(password, 8);
+    let userData = await browser.storage.sync.get('kidsProUser');
+
+    if (hashValue && userData) {
+      //
+      console.log('saving hash..' + hashValue);
+      let pref = userData.kidsProUser.preference;
+      let saved = browser.storage.sync.set({
+        kidsProUser: {
+          preference: pref,
+          admin: {
+            password: hashValue
+          }
         }
-      }
-    });
-    if (saved) {
+      });
       return true;
-    }
+      
+    } 
+  } catch (error) {
+    console.error(error);
+    return false;
   }
 }
 
@@ -181,10 +190,10 @@ async function parsePreference() {
   let pref = {};
   if (userData) {
     pref.rating = userData.kidsProUser.preference.rating;
-    if (userData.data.kidsProUser.preference.allowed) {
+    if (userData.kidsProUser.preference.allowed) {
       pref.allowedUrls = userData.kidsProUser.preference.allowed.urls;
     }
-    if (userData.data.kidsProUser.preference.blocked) {
+    if (userData.kidsProUser.preference.blocked) {
       pref.blockedUrls = userData.kidsProUser.preference.blocked.urls;
     }
   }
@@ -304,7 +313,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.type === 'verifyPassword') {
     const getP = getAdminPassword();
     getP.then(function (password) {
-      if (password === request.password) {
+      if (bcrypt.compare(request.password, password) === true) {
         // ok.
         console.log('match!');
         sendResponse({ message: "success" });
@@ -320,6 +329,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.log('save result - ' + result);
       sendResponse({ message: "success" });
     });
+    return true;
   }
 });
 

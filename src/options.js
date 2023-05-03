@@ -10,7 +10,7 @@ function promptAdminPassword(action) {
         {
             url: 'prompt.html?action=' + encodeURIComponent(action),
             type: 'popup',
-            height: 200,
+            height: 400,
             width: 600
         }
     );
@@ -263,9 +263,9 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 })
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
-//document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
+document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
 //document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
-document.querySelector("#save").addEventListener("click", saveOptions);
+//document.querySelector("#save").addEventListener("click", saveOptions);
 document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
 document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
