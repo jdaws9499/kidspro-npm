@@ -66,34 +66,114 @@
                 </div>
             </fieldset>
             <fieldset class="kidspro-fieldset mt-3">
-                <h2 class="kidspro-h2">Optional Settings</h2>
+                <h2 class="kidspro-h2">Allow/Block URL List (Optional)</h2>
                 <p class="kidspro-legend">The following list enables to override the web sites' self declared age
                     ratings.
                     You can add urls to block altdough they are allowed for the user's age. Or you can add urls to allow
                     altdough they are not allowed for the user's age.
                 </p>
-                <div class="kidspro-input">
+                <div class="kidspro-input mb-2">
                     <label title="These urls will be blocked from visiting regardless of the age rating of the site"
                         for="blockedlist">Blocked urls (overriden):</label>
                     <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*" />
-                    <input type="button" id="addBlock" value="Add" />
+                    <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
+                    <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
                     <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
                     <div id="displayBlocked" name="displayBlocked"></div>
                 </div>
-                <div class="kidspro-input">
+                <div class="kidspro-input mb-2">
                     <label title="These urls will be allowed to visit regardless of the age rating of the site"
                         for="allowedlist">Allowed urls (overriden):</label>
                     <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
                         pattern="https://.*" />
-                    <input type="button" id="addAllow" value="Add" />
+                    <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
+                    <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
+
                     <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
                     <div id="displayAllowed" name="displayAllowed"></div>
                     <output type="hidden" id="password" name="password"></output>
                 </div>
             </fieldset>
-            <div class="action-container">
-                <button type="submit" id="save" class="primary">Save</button>
-                <button type="reset" id="reset" class="secondary">Reset</button>
+            <fieldset class="kidspro-fieldset mt-3">
+                <h2 class="kidspro-h2">Browse Schedule</h2>
+                <p class="kidspro-legend">The browse schedule enables to add allwed time schedules to browse. You can add
+                    time and days of the week. It's allowed all the time as default. Uncheck box if you want to add
+                    certain allow times. If there is no schedule set, it's allowed all the time. 
+                </p>
+                <div class="input-group mt-3 mb-2 row">
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="mon" id="mon">
+                            <label class="form-check-label" for="mon">
+                                Monday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="tues" id="tues">
+                            <label class="form-check-label" for="tues">
+                                Tuesday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="wednes" id="wednes">
+                            <label class="form-check-label" for="wednes">
+                                Wednesday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="thurs" id="thurs">
+                            <label class="form-check-label" for="thurs">
+                                Thursday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="fri" id="fri">
+                            <label class="form-check-label" for="fri">
+                                Friday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="satur" id="satur">
+                            <label class="form-check-label" for="satur">
+                                Saturday
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="sun" id="sun">
+                            <label class="form-check-label" for="sun">
+                                Sunday
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <label for="fromTime" class="col-sm-2 col-form-label">From:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="time" class="form-control" id="fromTime" />
+                    </div>
+                    <div class="col-auto">
+                        <label for="toTime" class="col-sm-2 col-form-label">To:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="time" class="form-control" id="toTime" />
+                    </div>
+                    <div class="col-auto">
+                        <input type="button" id="addSchedule" value="Add" class="btn btn-primary" />
+                    </div>
+                    <div class="col-auto">
+                        <input type="button" id="clearSchedules" value="Clear" class="btn btn-secondary" />
+                    </div>
+                </div>
+                <div class="input-group mb-2 row">
+                    <output id="schedules" name="schedules"></output>
+                    <div>
+                        <ul id="displaySchedule" class="list-group list-group-flush"></ul>
+                    </div>
+                </div>
+            </fieldset>
+            <div class="action-container mt-2">
+                <button type="submit" id="save" class="btn btn-primary">Save</button>
+                <button type="reset" id="reset" class="btn btn-secondary">Reset</button>
             </div>
         </form>
     </div>

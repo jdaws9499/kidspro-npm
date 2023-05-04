@@ -196,6 +196,9 @@ async function parsePreference() {
     if (userData.kidsProUser.preference.blocked) {
       pref.blockedUrls = userData.kidsProUser.preference.blocked.urls;
     }
+    if (userData.kidsProUser.preference.schedules) {
+      pref.schedules = userData.kidsProUser.preference.schedules;
+    }
   }
   console.log('parsed preference');
   ratingCache.set('preference', pref);

@@ -1,6 +1,6 @@
 //'use strict';
 
-import './options.css';
+//import './options.css';
 
 let adminPass = '';
 
@@ -44,14 +44,14 @@ async function saveOptions() {
             preference: {
                 nickname: document.querySelector("#nickname").value,
                 bdate: document.querySelector("#bdate").value,
-                //adminPass: adminPass,
                 rating: getRating(birthdate),
                 allowed: {
                     urls: document.querySelector("#allowedUrls").value || "[]"
                 },
                 blocked: {
                     urls: document.querySelector("#blockedUrls").value || "[]"
-                }
+                },
+                schedules: document.querySelector("#schedules").value || "[]"
             },
             admin: {
                 password: document.querySelector("#password").value || ""
@@ -74,13 +74,13 @@ function resetOptions() {
                 nickname: "",
                 bdate: "",
                 rating: "",
-                //adminPass: adminPass,
                 allowed: {
                     urls: "[]"
                 },
                 blocked: {
                     urls: "[]"
-                }
+                },
+                schedules: "[]"
             },
             admin: {
                 password: document.querySelector("#password").value || ""
@@ -126,6 +126,80 @@ function displayBlockedItems(itemsStr) {
     document.querySelector("#displayBlocked").innerHTML = html;
 }
 
+function displaySchedules(schedules) {
+    console.log('displaySchedules') + schedules;
+  /* <!-- <ul class="list-group list-group-flush">
+  <li class="list-group-item">An item</li>
+  <li class="list-group-item">A second item</li>
+  <li class="list-group-item">A third item</li>
+  <li class="list-group-item">A fourth item</li>
+  <li class="list-group-item">And a fifth one</li-->
+*/
+    let html = "";
+    let items = JSON.parse(schedules); // string to json object
+    if (items) {
+        for (let i = 0; i < items.length; i++) {
+            html += "<li class=\"list-group-item\">"
+            html += JSON.stringify(items[i]);
+            html += "</li>";
+        }
+    }
+    document.querySelector("#displaySchedule").innerHTML = html;
+
+}
+
+async function addScheduleWithPrompt(e) {
+    promptAdminPassword("addSchedule");
+    e.preventDefault();
+}
+
+function addCheckedDay(input, fromTime, toTime, days) {
+    if (input.checked === true) {
+        days.push({ day: input.value, from: fromTime, to: toTime });
+    }
+    return days;
+}
+
+async function addSchedule() {
+    console.log('addSchedule');
+    let days = [];
+    let fromTime = document.querySelector("#fromTime").value;
+    let toTime = document.querySelector("#toTime").value;
+    console.log('from - ' + fromTime + ' to ' + toTime);
+
+    addCheckedDay(document.querySelector("#mon"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#tues"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#wednes"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#thurs"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#fri"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#satur"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#sun"), fromTime, toTime, days);
+
+    let schedules = JSON.parse(document.querySelector("#schedules").value || "[]"); // array strings to array object 
+    console.log('adding - ' + JSON.stringify(days));
+    schedules = schedules.concat(days);
+    document.querySelector("#schedules").value = JSON.stringify(schedules);
+    console.log ('schedules -' +  document.querySelector("#schedules").value);
+    saveOptions();
+}
+
+async function clearSchedulesWithPrompt(e) {
+    promptAdminPassword("clearSchedules");
+    e.preventDefault();
+}
+
+async function clearSchedules() {
+    console.log('clearSchedules');
+    document.querySelector("#schedules").value = "[]";
+    saveOptions();
+}
+
+async function allowSchedules() {
+    // TODO enable disabled inputs..
+    document.querySelector("#addSchedule").disabled = false;
+    document.querySelector("#clearSchedules").disabled = false;
+}
+
 async function addAllowItemWithPrompt(e) {
     promptAdminPassword("addAllowItem");
     e.preventDefault();
@@ -140,6 +214,17 @@ function addAllowItem() {
     document.querySelector("#allowedUrls").value = JSON.stringify(urls);
     document.querySelector("#newAllowItem").value = "";
     //displayAllowedItems(JSON.stringify(urls));
+    saveOptions();
+}
+
+async function clearAllowItemsWithPrompt(e) {
+    promptAdminPassword("clearAllowItems");
+    e.preventDefault();
+}
+
+async function clearAllowItems() {
+    console.log('clearAllowItems');
+    document.querySelector("#allowedUrls").value = "[]";
     saveOptions();
 }
 
@@ -159,10 +244,18 @@ function addBlockItem() {
     saveOptions();
 }
 
+async function clearBlockItemsWithPrompt(e) {
+    promptAdminPassword("clearBlockItems");
+    e.preventDefault();
+}
 
+async function clearBlockItems() {
+    console.log('clearBlockItems');
+    document.querySelector("#blockedUrls").value = "[]";
+    saveOptions();
+}
 
 function getRating(birthday) {
-
     let age = calculateAge(birthday);
     console.log('age: ' + age);
     let rating = 'NA';
@@ -233,6 +326,12 @@ function restoreOptions() {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
                 displayAllowedItems(res.kidsProUser.preference.allowed.urls);
             }
+            
+            if (res.kidsProUser.preference.schedules) {
+                document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
+                displaySchedules(res.kidsProUser.preference.schedules);
+            }
+
             document.querySelector("output[name='password'").value = res.kidsProUser.admin.password;
         });
 
@@ -253,14 +352,22 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             addAllowItem();
         } else if (request.message === 'addBlockItem') {
             addBlockItem();
+        } else if (request.message === 'addSchedule') {
+            addSchedule();
+        } else if (request.message === 'clearSchedules') {
+            clearSchedules();
+        } else if (request.message === 'clearAllowItems') {
+            clearAllowItems();
+        } else if (request.message === 'clearBlockItems') {
+            clearBlockItems();
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
-        } else {
-            console.error('invalida action');
-        }
-        reloadPageWithHash();
+        } 
+    } else {
+        console.error('invalid action');
     }
-})
+    reloadPageWithHash();
+});
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
@@ -269,3 +376,13 @@ document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt)
 document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
 document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
+//document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
+//document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
+document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
+document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
+//document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
+//document.querySelector("#addSchedule").addEventListener("click", clearSchedulesWithPrompt);
+document.querySelector("#addSchedule").addEventListener("click", addSchedule);
+document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
+
+

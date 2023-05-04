@@ -5,9 +5,10 @@ My Chrome Extension
 ## Features
 
 - Feature 1
-- Feature 2
-- Password encoded 
-- Time restrictions (day and time)
+- Parse age rating from x.509 certificates and compare with user rating x
+- Handle block urls and allow urls x
+- Password encoded using bcryptjs x
+- Time restrictions (day and time) 
 - Monitoring (which blocked sites the kids visited)
 - Have password up front
 - CSS of the existing pages (blocked page can be for children and teens separately, do it in SUMMER)

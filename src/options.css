@@ -31,9 +31,9 @@ input[id="newAllowItem"], input[id="newBlockItem"]{
     place-self: stretch;
 }
 
-input[type="button"] {
+/*input[type="button"] {
     grid-column: 4;
-}
+}*/
 
 input[id^="allowed_"], input[id^="blocked_"] {
     grid-column: 2 / span 2;
