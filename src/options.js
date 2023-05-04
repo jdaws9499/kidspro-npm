@@ -130,9 +130,16 @@ function displaySchedules(schedules) {
     let items = JSON.parse(schedules); // string to json object
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<li class=\"list-group-item\">"
-            html += JSON.stringify(items[i]);
+            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
+            html += "<li class=\"list-group-item flex-fill\">"
+            html += items[i].day + 'day: ';
             html += "</li>";
+
+            html += "<li class=\"list-group-item\">"
+            html += items[i].from + ' - ' + items[i].to;
+            html += "</li>";
+
+            html += "</ul>";
         }
     }
     document.querySelector("#displaySchedule").innerHTML = html;
@@ -146,7 +153,7 @@ async function addScheduleWithPrompt(e) {
 
 function addCheckedDay(input, fromTime, toTime, days) {
     if (input.checked === true) {
-        days.push({ day: input.value, from: fromTime, to: toTime });
+        days.push({ dayId: input.id, day: input.value, from: fromTime, to: toTime });
     }
     return days;
 }
@@ -158,20 +165,48 @@ async function addSchedule() {
     let toTime = document.querySelector("#toTime").value;
     console.log('from - ' + fromTime + ' to ' + toTime);
 
-    addCheckedDay(document.querySelector("#mon"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#tues"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#wednes"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#thurs"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#fri"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#satur"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#sun"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day0"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day1"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day2"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day3"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day4"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day5"), fromTime, toTime, days);
+    addCheckedDay(document.querySelector("#day6"), fromTime, toTime, days);
 
     let schedules = JSON.parse(document.querySelector("#schedules").value || "[]"); // array strings to array object 
     console.log('adding - ' + JSON.stringify(days));
     schedules = schedules.concat(days);
-    document.querySelector("#schedules").value = JSON.stringify(schedules);
-    console.log ('schedules -' +  document.querySelector("#schedules").value);
-    saveOptions();
+    let sorted = await schedules.sort((a, b) => {
+        //1. Check day of the week
+        if (a.dayId < b.dayId) {
+            return -1;
+        } else if (a.dayId > b.dayId) {
+            return 1;
+        } else {
+            //2. from time
+            if (a.from < b.from) {
+                return -1;
+            } else if (a.from > b.from) {
+                return 1;
+            } else {
+                //3. to time
+                if (a.to < b.to) {
+                    return -1;
+                } else if (a.to > b.to) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+            return 0;
+        }
+    });
+
+    if (sorted) {
+        document.querySelector("#schedules").value = JSON.stringify(sorted);
+        console.log('schedules -' + document.querySelector("#schedules").value);
+        saveOptions();
+    }
 }
 
 async function clearSchedulesWithPrompt(e) {
@@ -317,7 +352,7 @@ function restoreOptions() {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
                 displayAllowedItems(res.kidsProUser.preference.allowed.urls);
             }
-            
+
             if (res.kidsProUser.preference.schedules) {
                 document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
                 displaySchedules(res.kidsProUser.preference.schedules);
@@ -353,7 +388,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             clearBlockItems();
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
-        } 
+        }
     }
 });
 
