@@ -79,7 +79,9 @@
                     <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
                     <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
                     <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
-                    <div id="displayBlocked" name="displayBlocked"></div>
+                    <div>
+                        <ul id="displayBlocked" class="list-group list-group-flush"></ul>
+                    </div>
                 </div>
                 <div class="kidspro-input mb-2">
                     <label title="These urls will be allowed to visit regardless of the age rating of the site"
@@ -90,7 +92,9 @@
                     <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
 
                     <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
-                    <div id="displayAllowed" name="displayAllowed"></div>
+                    <div>
+                        <ul id="displayAllowed" class="list-group list-group-flush"></ul>
+                    </div>
                     <output type="hidden" id="password" name="password"></output>
                 </div>
             </fieldset>

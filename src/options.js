@@ -98,9 +98,9 @@ function displayAllowedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<input class=\"col-lg-6\" type=\"disabled\" value = " + items[i] + " id=\"allowed_" + i + "\" name=\"allowed_" + i + "\">"
-            html += "</input>";
-            // html += "<input type=\"button\" id=\"deleteAllow_" + i + " name=\"deleteAllow_" + i + "\ value=\"Delete\"></input></br>";
+            html += "<li class=\"list-group-item\">"
+            html += items[i];
+            html += "</li>";
         }
     }
     console.log('display - ' + html);
@@ -115,11 +115,9 @@ function displayBlockedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<input type=\"disabled\" value = " + items[i] + " id=\"blocked_" + i + "\" name=\"blocked_" + i + "\">"
-            html += "</input>";
-
-            //html += "<input type=\"button\" id=\"deleteBlock_" + i + " name=\"deleteBlock_" + i + "\ value=\"Delete\"></input></br>";
-
+            html += "<li class=\"list-group-item\">"
+            html += items[i];
+            html += "</li>";
         }
     }
     console.log('display - ' + html);
@@ -128,13 +126,6 @@ function displayBlockedItems(itemsStr) {
 
 function displaySchedules(schedules) {
     console.log('displaySchedules') + schedules;
-  /* <!-- <ul class="list-group list-group-flush">
-  <li class="list-group-item">An item</li>
-  <li class="list-group-item">A second item</li>
-  <li class="list-group-item">A third item</li>
-  <li class="list-group-item">A fourth item</li>
-  <li class="list-group-item">And a fifth one</li-->
-*/
     let html = "";
     let items = JSON.parse(schedules); // string to json object
     if (items) {
@@ -363,10 +354,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
         } 
-    } else {
-        console.error('invalid action');
     }
-    reloadPageWithHash();
 });
 
 document.addEventListener('DOMContentLoaded', restoreOptions);

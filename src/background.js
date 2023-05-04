@@ -177,8 +177,8 @@ async function saveAdminPassword(password) {
         }
       });
       return true;
-      
-    } 
+
+    }
   } catch (error) {
     console.error(error);
     return false;
@@ -316,15 +316,21 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.type === 'verifyPassword') {
     const getP = getAdminPassword();
     getP.then(function (password) {
-      if (bcrypt.compare(request.password, password) === true) {
-        // ok.
-        console.log('match!');
-        sendResponse({ message: "success" });
-      } else {
-        console.log('fail!');
-        sendResponse({ message: "fail" });
-      }
+      console.log('password - ' + password);
+      const getV = bcrypt.compare(request.password, password);
+      getV.then(function (result) {
+        console.log('result - ' + result);
+        if (result === true) {
+          // ok.
+          console.log('match!');
+          sendResponse({ message: "success" });
+        } else {
+          console.log('fail!');
+          sendResponse({ message: "fail" });
+        }
+      });
     });
+
     return true;
   } else if (request.type === 'storePassword') {
     const saveP = saveAdminPassword(request.password);
