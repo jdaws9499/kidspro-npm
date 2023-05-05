@@ -9,14 +9,14 @@ My Chrome Extension
 - Parse age rating from x.509 certificates and compare with user rating x
 - Handle block urls and allow urls x
 - Password encoded using bcryptjs x
-- Time restrictions (day and time) 
+- Time restrictions (day and time) x
 - Monitoring (which blocked sites the kids visited)
 - Have password up front
 - CSS of the existing pages (blocked page can be for children and teens separately, do it in SUMMER)
 
 
 ## Bugs
-- Listener for update settings in background.js
+- Listener for update settings in background.js x
 
 ## Install
 

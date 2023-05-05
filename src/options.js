@@ -151,6 +151,18 @@ async function addScheduleWithPrompt(e) {
     e.preventDefault();
 }
 
+function clearNewScheduleField() {
+    document.querySelector("#day0").checked = false;
+    document.querySelector("#day1").checked = false;
+    document.querySelector("#day2").checked = false;
+    document.querySelector("#day3").checked = false;
+    document.querySelector("#day4").checked = false;
+    document.querySelector("#day5").checked = false;
+    document.querySelector("#day6").checked = false;
+    document.querySelector("#fromTime").value = "";
+    document.querySelector("#toTime").value = "";
+}
+
 function addCheckedDay(input, fromTime, toTime, days) {
     if (input.checked === true) {
         days.push({ dayId: input.id, day: input.value, from: fromTime, to: toTime });
@@ -205,6 +217,7 @@ async function addSchedule() {
     if (sorted) {
         document.querySelector("#schedules").value = JSON.stringify(sorted);
         console.log('schedules -' + document.querySelector("#schedules").value);
+        clearNewScheduleField();
         saveOptions();
     }
 }
@@ -218,12 +231,6 @@ async function clearSchedules() {
     console.log('clearSchedules');
     document.querySelector("#schedules").value = "[]";
     saveOptions();
-}
-
-async function allowSchedules() {
-    // TODO enable disabled inputs..
-    document.querySelector("#addSchedule").disabled = false;
-    document.querySelector("#clearSchedules").disabled = false;
 }
 
 async function addAllowItemWithPrompt(e) {
