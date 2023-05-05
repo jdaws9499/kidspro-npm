@@ -217,11 +217,48 @@ function redirect(tabId, url, siteRating) {
   });
 }
 
+function verifyAllowedSchedules() {
+  console.log('verifyAllowedSchedules');
+  const preference = getPreference();
+  const schedules = JSON.parse(preference.schedules || "[]");
+  if (schedules.length === 0) { // allow always lest defined
+    console.log('allow always');
+    return true;
+  }
+  const now = new Date();
+  const today = now.getDay();
+
+  const currentHour = now.getHours();
+
+  const currentMinute = now.getMinutes();
+
+  for (const schedule of schedules) {
+    if (schedule.dayId === 'day' + today) { // day5 = Friday
+
+      if (schedule.from < schedule.to) {
+        console.log('from is smaller');
+        if (schedule.from <= currentHour + ':' + currentMinute && schedule.to > currentHour + ':' + currentMinute) {
+          // match allow
+          console.log('match allow - ' + schedule);
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (!changeInfo.url || changeInfo.url.startsWith("moz-extension:")) { // redirecting
     return;
   }
+  // check time
+  let allow = verifyAllowedSchedules();
+  if (!allow) {
+    redirect(tabId, changeInfo.url, 'BBB'); // BBB blocked by schedules
+  }
 
+  // check site rating
   const originUrl = new URL(changeInfo.url).origin;
   console.log('changeInfo.url.origin: ' + originUrl);
 
@@ -342,8 +379,13 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function handleClick() {
+function handleClick(e) {
   browser.runtime.openOptionsPage();
 }
 
+function handleStorageChange(storage) {
+  parsePreference();
+}
+
 browser.browserAction.onClicked.addListener(handleClick);
+browser.storage.onChanged.addListener(handleStorageChange);
