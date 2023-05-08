@@ -5,12 +5,12 @@ My Chrome Extension
 ## Features
 
 - Block for children x
-- Notification for teens
+- Notification for teens x
 - Parse age rating from x.509 certificates and compare with user rating x
 - Handle block urls and allow urls x
 - Password encoded using bcryptjs x
 - Time restrictions (day and time) x
-- Monitoring (which blocked sites the kids visited)
+- Monitoring (which blocked sites the kids visited) x
 - Have password up front
 - CSS of the existing pages (blocked page can be for children and teens separately, do it in SUMMER)
 

@@ -129,11 +129,13 @@ function displayBlockedItems(itemsStr) {
 function getBlockedReason(siteAccess) {
     let reason = 'not known.';
     if (siteAccess === 'B') {
-       reason = 'Age rating mismatch.';
+       reason = 'The site was blocked due to age rating limit.';
     } else if (siteAccess === 'BB') {
-        reason = 'The site in the block URL list';
+        reason = 'The site was blocked as it\'s in the block URL list';
     } else if (siteAccess === 'BBB') {
-        reason = 'The user tried to brows outside the allowed schedule';
+        reason = 'The site was blocked as it was outside the allowed schedule';
+    } else if (siteAccess === 'W') {
+        reason = 'The user accessed the site beyond age rating.'
     }
     return reason;
 }

@@ -235,9 +235,13 @@ async function parsePreference() {
 
 async function logRedirect(url, siteAccess) {
   if (siteAccess === 'B' || siteAccess === 'BB') { // only log when kids violated knowingly...
-    let item = { time: new Date(), url: url, siteAccess: siteAccess };
-    addLogItem(item);
+    logAccessViolated(url, siteAccess);
   }
+}
+
+async function logAccessViolated(url, siteAccess) {
+  let item = { time: new Date(), url: url, siteAccess: siteAccess };
+  addLogItem(item);
 }
 
 function redirect(tabId, url, siteAccess) {
@@ -317,11 +321,15 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
     }
 
     if (siteAccess === 'W') {
+      logAccessViolated(changeInfo.url, siteAccess);
       browser.notifications.create({
+        iconUrl: "icons/fox.jpg",
         type: "basic",
         title: "KidsPro alert",
-        message: 'Hi you are visiting a website you are not supposed to.'
+        message: 'Hi you are visiting a website you are not supposed to.',
+        contextMessage: 'this message is...'
       });
+
       browser.pageAction.setIcon({
         tabId: tabId,
         path: "icons/info_icon.png"
@@ -344,11 +352,11 @@ browser.runtime.onInstalled.addListener(() => {
   /*browser.pageAction.setBadgeText({
       text: "SAFE",
   });*/
-  browser.notifications.create('above rating', {
+  /*browser.notifications.create('above rating', {
     type: "basic",
     title: "KidsPro alert",
     message: 'Hi you are visiting a website you are supposed to.'
-  });
+  });*/
 
   parsePreference();
 
