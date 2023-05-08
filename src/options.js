@@ -167,12 +167,17 @@ function displayLogs(logs) {
             html += new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time));
             html += "</li>";
 
-            html += "<li class=\"list-group-item\">"
+            html += "<li class=\"list-group-item\">";
             html += items[i].url;
             html += "</li>";
 
-            html += "<li class=\"list-group-item flex-fill\">"
+            html += "<li class=\"list-group-item flex-fill justify-content-between \">";
             html += getBlockedReason(items[i].siteAccess);
+            if (items[i].numOfTries && items[i].numOfTries > 1 ) {
+                html += "<span class=\"badge bg-secondary rounded-pill position-absolute top-50 end-0 translate-middle\">";
+                html += items[i].numOfTries;
+                html += "</span>";
+            }
             html += "</li>";
 
             html += "</ul>";

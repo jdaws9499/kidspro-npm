@@ -168,6 +168,17 @@ async function addLogItem(logItem) {
       let pref = userData.kidsProUser.preference;
       let admin = userData.kidsProUser.admin;
       let logs = JSON.parse(userData.kidsProUser.logs || "[]");
+      let lastItem = logs[logs.length-1];
+      if (lastItem.url === logItem.url) {
+        // don't log the same site multiple times if it's recent one. 
+        //let item = { time: new Date(), url: url, siteAccess: siteAccess };
+        if (lastItem.numOfTries) {
+          logItem.numOfTries = lastItem.numOfTries + 1;
+        } else {
+          logItem.numOfTries = 2;
+        }
+        logs.pop();
+      }
       logs.push(logItem);
       if (logs > 50) {
         logs.shift(); // keep the length to 50. 
@@ -240,7 +251,7 @@ async function logRedirect(url, siteAccess) {
 }
 
 async function logAccessViolated(url, siteAccess) {
-  let item = { time: new Date(), url: url, siteAccess: siteAccess };
+  let item = { time: new Date(), url: url, siteAccess: siteAccess, numOfTries: 1 };
   addLogItem(item);
 }
 
