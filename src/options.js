@@ -28,8 +28,8 @@ function createAdminPassword() {
 }
 
 async function saveOptionsWithPrompt(e) {
-    createAdminPassword();
-    //promptAdminPassword("saveOptions");
+    //createAdminPassword();
+    promptAdminPassword("saveOptions");
     e.preventDefault();
 }
 
@@ -450,7 +450,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             clearAllowItems();
         } else if (request.message === 'clearBlockItems') {
             clearBlockItems();
-        } else if (request.message === 'clearLogItems') {
+        } else if (request.message === 'clearLogs') {
             clearLogs();
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
@@ -460,18 +460,19 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
-//document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
+document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
 //document.querySelector("#save").addEventListener("click", saveOptions);
-document.querySelector("#reset").addEventListener("click", resetOptions);
+//document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
 document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
-//document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
-//document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
-document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
-document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
-//document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
-//document.querySelector("#addSchedule").addEventListener("click", clearSchedulesWithPrompt);
-document.querySelector("#addSchedule").addEventListener("click", addSchedule);
-document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
-document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
+document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
+document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
+//document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
+//document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
+document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
+document.querySelector("#clearSchedules").addEventListener("click", clearSchedulesWithPrompt);
+//document.querySelector("#addSchedule").addEventListener("click", addSchedule);
+//document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
+//document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
+document.querySelector("#clearLogItems").addEventListener("click", clearLogsWithPrompt);
 
