@@ -129,7 +129,7 @@ function displayBlockedItems(itemsStr) {
 function getBlockedReason(siteAccess) {
     let reason = 'not known.';
     if (siteAccess === 'B') {
-       reason = 'The site was blocked due to age rating limit.';
+        reason = 'The site was blocked due to age rating limit.';
     } else if (siteAccess === 'BB') {
         reason = 'The site was blocked as it\'s in the block URL list';
     } else if (siteAccess === 'BBB') {
@@ -145,16 +145,32 @@ function displayLogs(logs) {
     let html = "";
     let items = logs;
     if (items) {
+        let options = {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+        };
         for (let i = 0; i < items.length; i++) {
-            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
-            html += "<li class=\"list-group-item\">"
-            html += items[i].time;
+            let color = "list-group-item-info";
+            let siteAccess = items[i].siteAccess;
+            if (siteAccess === 'W') {
+                color = "list-group-item-warning";
+            } else if (siteAccess === 'BB') {
+                color = "list-group-item-danger";
+            }
+            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex " + color + "\">";
+            html += "<li class=\"list-group-item\">";
+            html += new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time));
             html += "</li>";
 
             html += "<li class=\"list-group-item\">"
             html += items[i].url;
             html += "</li>";
-            
+
             html += "<li class=\"list-group-item flex-fill\">"
             html += getBlockedReason(items[i].siteAccess);
             html += "</li>";
@@ -456,7 +472,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             clearLogs();
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
-        } 
+        }
     }
 });
 
