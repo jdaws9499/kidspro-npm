@@ -159,6 +159,32 @@ async function getAdminPassword() {
   return pass;
 }
 
+async function addLogItem(logItem) {
+  try {
+    let userData = await browser.storage.sync.get('kidsProUser');
+    if (userData) {
+      console.log('saving log item...' + JSON.stringify(logItem));
+      console.log('data ' + JSON.stringify(userData.kidsProUser));
+      let pref = userData.kidsProUser.preference;
+      let admin = userData.kidsProUser.admin;
+      let logs = JSON.parse(userData.kidsProUser.logs || "[]");
+      logs.push(logItem);
+      if (logs > 50) {
+        logs.shift(); // keep the length to 50. 
+      }
+      let saved = browser.storage.sync.set({
+        kidsProUser: {
+          preference: pref,
+          admin: admin,
+          logs: JSON.stringify(logs)
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 async function saveAdminPassword(password) {
   try {
     let hashValue = await bcrypt.hash(password, 8);
@@ -168,12 +194,14 @@ async function saveAdminPassword(password) {
       //
       console.log('saving hash..' + hashValue);
       let pref = userData.kidsProUser.preference;
+      let logs = userData.kidsProUser.logs;
       let saved = browser.storage.sync.set({
         kidsProUser: {
           preference: pref,
           admin: {
             password: hashValue
-          }
+          },
+          logs: logs
         }
       });
       return true;
@@ -205,12 +233,22 @@ async function parsePreference() {
   return pref;
 }
 
-function redirect(tabId, url, siteRating) {
-  //console.log(`Redirecting: ${requestDetails.url}`);
-  const redirectUrl = browser.runtime.getURL('blocked.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteRating);
-  /*if (requestDetails.url === targetUrl) {
-    return;
-  }*/
+async function logRedirect(url, siteAccess) {
+  if (siteAccess === 'B' || siteAccess === 'BB') { // only log when kids violated knowingly...
+    let item = { time: new Date(), url: url, siteAccess: siteAccess };
+    addLogItem(item);
+  }
+}
+
+function redirect(tabId, url, siteAccess) {
+  // log redirect
+  logRedirect(url, siteAccess);
+
+  const redirectUrl = browser.runtime.getURL('blocked.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteAccess);
+  // siteRating 
+  // B : age rating
+  // BB : blocked site
+  // BBB : outside approved hours
 
   chrome.tabs.update(tabId, {
     url: redirectUrl

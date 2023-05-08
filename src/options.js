@@ -55,7 +55,8 @@ async function saveOptions() {
             },
             admin: {
                 password: document.querySelector("#password").value || ""
-            }
+            },
+            logs: document.querySelector("#logs").value || "[]"
         }
     });
     location.reload();
@@ -84,7 +85,8 @@ function resetOptions() {
             },
             admin: {
                 password: document.querySelector("#password").value || ""
-            }
+            },
+            logs: document.querySelector("#logs").value || "[]"
         }
     });
     location.reload();
@@ -94,7 +96,7 @@ function displayAllowedItems(itemsStr) {
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayAllowed").value);
 
-    let items = JSON.parse(itemsStr);
+    let items = itemsStr;
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
@@ -111,7 +113,7 @@ function displayBlockedItems(itemsStr) {
     console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayBlocked").value);
 
-    let items = JSON.parse(itemsStr);
+    let items = itemsStr;
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
@@ -124,10 +126,47 @@ function displayBlockedItems(itemsStr) {
     document.querySelector("#displayBlocked").innerHTML = html;
 }
 
-function displaySchedules(schedules) {
-    console.log('displaySchedules') + schedules;
+function getBlockedReason(siteAccess) {
+    let reason = 'not known.';
+    if (siteAccess === 'B') {
+       reason = 'Age rating mismatch.';
+    } else if (siteAccess === 'BB') {
+        reason = 'The site in the block URL list';
+    } else if (siteAccess === 'BBB') {
+        reason = 'The user tried to brows outside the allowed schedule';
+    }
+    return reason;
+}
+
+function displayLogs(logs) {
+    console.log('displayLogs - ' + logs);
     let html = "";
-    let items = JSON.parse(schedules); // string to json object
+    let items = logs;
+    if (items) {
+        for (let i = 0; i < items.length; i++) {
+            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
+            html += "<li class=\"list-group-item\">"
+            html += items[i].time;
+            html += "</li>";
+
+            html += "<li class=\"list-group-item\">"
+            html += items[i].url;
+            html += "</li>";
+            
+            html += "<li class=\"list-group-item flex-fill\">"
+            html += getBlockedReason(items[i].siteAccess);
+            html += "</li>";
+
+            html += "</ul>";
+        }
+    }
+    document.querySelector("#displayLogs").innerHTML = html;
+}
+
+function displaySchedules(schedules) {
+    console.log('displaySchedules - ') + schedules;
+    let html = "";
+    let items = schedules; // string to json object
     if (items) {
         for (let i = 0; i < items.length; i++) {
             html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
@@ -232,6 +271,19 @@ async function clearSchedules() {
     document.querySelector("#schedules").value = "[]";
     saveOptions();
 }
+
+async function clearLogsWithPrompt(e) {
+    promptAdminPassword("clearLogs");
+    e.preventDefault();
+}
+
+async function clearLogs() {
+    console.log('clearLogs');
+    document.querySelector("#logs").value = "[]";
+    saveOptions();
+}
+
+
 
 async function addAllowItemWithPrompt(e) {
     promptAdminPassword("addAllowItem");
@@ -353,19 +405,24 @@ function restoreOptions() {
             document.querySelector("#rating").value = res.kidsProUser.preference.rating || 'NA';
             if (res.kidsProUser.preference.blocked) {
                 document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.preference.blocked.urls;
-                displayBlockedItems(res.kidsProUser.preference.blocked.urls);
+                displayBlockedItems(JSON.parse(res.kidsProUser.preference.blocked.urls));
             }
             if (res.kidsProUser.preference.allowed) {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
-                displayAllowedItems(res.kidsProUser.preference.allowed.urls);
+                displayAllowedItems(JSON.parse(res.kidsProUser.preference.allowed.urls));
             }
 
             if (res.kidsProUser.preference.schedules) {
                 document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
-                displaySchedules(res.kidsProUser.preference.schedules);
+                displaySchedules(JSON.parse(res.kidsProUser.preference.schedules));
             }
 
             document.querySelector("output[name='password'").value = res.kidsProUser.admin.password;
+
+            if (res.kidsProUser.logs) {
+                document.querySelector("output[name='logs']").value = res.kidsProUser.logs;
+                displayLogs(JSON.parse(res.kidsProUser.logs));
+            }
         });
 
     } catch (error) {
@@ -393,9 +450,11 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
             clearAllowItems();
         } else if (request.message === 'clearBlockItems') {
             clearBlockItems();
+        } else if (request.message === 'clearLogItems') {
+            clearLogs();
         } else if (request.message === 'restoreOptions') {
             restoreOptions();
-        }
+        } 
     }
 });
 
@@ -414,5 +473,5 @@ document.querySelector("#clearBlockItems").addEventListener("click", clearBlockI
 //document.querySelector("#addSchedule").addEventListener("click", clearSchedulesWithPrompt);
 document.querySelector("#addSchedule").addEventListener("click", addSchedule);
 document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
-
+document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
 
