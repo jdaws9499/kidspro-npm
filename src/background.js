@@ -54,28 +54,33 @@ async function validateSite(details) {
   let siteAccess = 'A';
   if (siteRating) {
     console.log('**siteRating: ' + siteRating);
-    if (preference.rating && ratings.indexOf(preference.rating) > -1) {
-      ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
-      if (!ratingMatched) {
-        if (preference.rating === 'P' || preference.rating === 'E') {
-          siteAccess = 'B';
-        } else {
-          siteAccess = 'W';
+    if (preference.allowedForAll.includes(siteUrl.origin)) {
+      siteAccess = 'AA'; // help sites for allowed for all.. 
+    } else {
+
+      if (preference.rating && ratings.indexOf(preference.rating) > -1) {
+        ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
+        if (!ratingMatched) {
+          if (preference.rating === 'P' || preference.rating === 'E') {
+            siteAccess = 'B';
+          } else {
+            siteAccess = 'W';
+          }
         }
       }
-    }
 
-    if (preference.allowedUrls) {
-      allowed = preference.allowedUrls.indexOf(siteUrl.origin) > -1;
-      if (allowed) {
-        siteAccess = 'AA';
+      if (preference.allowedUrls) {
+        allowed = preference.allowedUrls.indexOf(siteUrl.origin) > -1;
+        if (allowed) {
+          siteAccess = 'AA';
+        }
       }
-    }
 
-    if (preference.blockedUrls) {
-      blocked = preference.blockedUrls.indexOf(siteUrl.origin) > -1;
-      if (blocked) {
-        siteAccess = 'BB';
+      if (preference.blockedUrls) {
+        blocked = preference.blockedUrls.indexOf(siteUrl.origin) > -1;
+        if (blocked) {
+          siteAccess = 'BB';
+        }
       }
     }
 
@@ -335,7 +340,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 
     if (siteAccess === 'W') {
       logAccessViolated(changeInfo.url, siteAccess);
-      
+
       browser.pageAction.setIcon({
         tabId: tabId,
         path: "icons/info_icon.png"

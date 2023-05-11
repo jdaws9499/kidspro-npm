@@ -4,6 +4,11 @@
 
 let adminPass = '';
 
+const allowedForAll = [
+    'https://protectkidsonline.ca',
+    'https://www.cybertip.ca'
+];
+
 function promptAdminPassword(action) {
 
     browser.windows.create(
@@ -13,7 +18,7 @@ function promptAdminPassword(action) {
             height: 400,
             width: 600
         }
-    );
+    );s
 }
 
 function createAdminPassword() {
@@ -45,6 +50,7 @@ async function saveOptions() {
                 nickname: document.querySelector("#nickname").value,
                 bdate: document.querySelector("#bdate").value,
                 rating: getRating(birthdate),
+                allowedForAll: allowedForAll,
                 allowed: {
                     urls: document.querySelector("#allowedUrls").value || "[]"
                 },
@@ -92,8 +98,22 @@ function resetOptions() {
     location.reload();
 }
 
+function displayAllowedForAll(itemsStr) {
+    let items = itemsStr;
+    let html = "";
+    if (items) {
+        for (let i = 0; i < items.length; i++) {
+            html += "<li class=\"list-group-item\">"
+            html += items[i];
+            html += "</li>";
+        }
+    }
+    console.log('display - ' + html);
+    document.querySelector("#displayAllowedForAll").innerHTML = html;
+}
+
 function displayAllowedItems(itemsStr) {
-    console.log('value' + itemsStr);
+    console.log('value' + itemsStr); 
     console.log('display' + document.querySelector("#displayAllowed").value);
 
     let items = itemsStr;
@@ -410,6 +430,10 @@ function getMinimumDate() {
     return minDate;
 }
 
+function adminLogout() {
+    console.log('adminLogout');
+}
+
 
 function restoreOptions() {
     try {
@@ -434,6 +458,10 @@ function restoreOptions() {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
                 displayAllowedItems(JSON.parse(res.kidsProUser.preference.allowed.urls));
             }
+            if (res.kidsProUser.preference.allowedForAll) {
+                displayAllowedForAll(res.kidsProUser.preference.allowedForAll);
+            }
+
 
             if (res.kidsProUser.preference.schedules) {
                 document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
@@ -482,6 +510,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
+window.addEventListener("beforeunload", adminLogout);
 document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
 document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
 //document.querySelector("#save").addEventListener("click", saveOptions);
