@@ -3,6 +3,12 @@ import * as asn1js from 'asn1js';
 const NodeCache = require("node-cache");
 const bcrypt = require("bcryptjs");
 const ratingCache = new NodeCache();
+
+
+const allowedForAll = [
+  'https://protectkidsonline.ca',
+  'https://www.cybertip.ca'
+];
 //'use strict';
 
 // With background scripts you can communicate with popup
@@ -54,7 +60,7 @@ async function validateSite(details) {
   let siteAccess = 'A';
   if (siteRating) {
     console.log('**siteRating: ' + siteRating);
-    if (preference.allowedForAll.includes(siteUrl.origin)) {
+    if (allowedForAll.includes(siteUrl.origin)) {
       siteAccess = 'AA'; // help sites for allowed for all.. 
     } else {
 
@@ -348,6 +354,10 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       browser.pageAction.setTitle({
         tabId: tabId,
         title: "kidspro Npm - warning"
+      });
+      browser.pageAction.setPopup({
+        tabId: tabId,
+        popup: "popup_warning.html"
       });
 
       browser.notifications.create({

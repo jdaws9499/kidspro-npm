@@ -7,7 +7,7 @@
   "page_action": {
     "default_icon": "icons/dyno_icon.png",
     "default_title": "kidspro Npm",
-    "default_popup": "popup.html",
+    "default_popup": "popup_success.html",
     "show_matches": [
       "https://*/*"
     ]

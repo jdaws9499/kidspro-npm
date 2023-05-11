@@ -50,7 +50,6 @@ async function saveOptions() {
                 nickname: document.querySelector("#nickname").value,
                 bdate: document.querySelector("#bdate").value,
                 rating: getRating(birthdate),
-                allowedForAll: allowedForAll,
                 allowed: {
                     urls: document.querySelector("#allowedUrls").value || "[]"
                 },
@@ -458,11 +457,7 @@ function restoreOptions() {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
                 displayAllowedItems(JSON.parse(res.kidsProUser.preference.allowed.urls));
             }
-            if (res.kidsProUser.preference.allowedForAll) {
-                displayAllowedForAll(res.kidsProUser.preference.allowedForAll);
-            }
-
-
+            displayAllowedForAll(allowedForAll);
             if (res.kidsProUser.preference.schedules) {
                 document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
                 displaySchedules(JSON.parse(res.kidsProUser.preference.schedules));
