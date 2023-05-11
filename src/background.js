@@ -168,16 +168,18 @@ async function addLogItem(logItem) {
       let pref = userData.kidsProUser.preference;
       let admin = userData.kidsProUser.admin;
       let logs = JSON.parse(userData.kidsProUser.logs || "[]");
-      let lastItem = logs[logs.length-1];
-      if (lastItem.url === logItem.url) {
-        // don't log the same site multiple times if it's recent one. 
-        //let item = { time: new Date(), url: url, siteAccess: siteAccess };
-        if (lastItem.numOfTries) {
-          logItem.numOfTries = lastItem.numOfTries + 1;
-        } else {
-          logItem.numOfTries = 2;
+      if (logs.length > 0) {
+        let lastItem = logs[logs.length - 1];
+        if (lastItem.url === logItem.url) {
+          // don't log the same site multiple times if it's recent one. 
+          //let item = { time: new Date(), url: url, siteAccess: siteAccess };
+          if (lastItem.numOfTries) {
+            logItem.numOfTries = lastItem.numOfTries + 1;
+          } else {
+            logItem.numOfTries = 2;
+          }
+          logs.pop();
         }
-        logs.pop();
       }
       logs.push(logItem);
       if (logs > 50) {
@@ -307,7 +309,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   }
   // check time
   let allow = verifyAllowedSchedules();
-  if (!allow) {
+  if (allow && allow === false) {
     redirect(tabId, changeInfo.url, 'BBB'); // BBB blocked by schedules
   }
 
@@ -333,14 +335,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 
     if (siteAccess === 'W') {
       logAccessViolated(changeInfo.url, siteAccess);
-      browser.notifications.create({
-        iconUrl: "icons/fox.jpg",
-        type: "basic",
-        title: "KidsPro alert",
-        message: 'Hi you are visiting a website you are not supposed to.',
-        contextMessage: 'this message is...'
-      });
-
+      
       browser.pageAction.setIcon({
         tabId: tabId,
         path: "icons/info_icon.png"
@@ -348,6 +343,14 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
       browser.pageAction.setTitle({
         tabId: tabId,
         title: "kidspro Npm - warning"
+      });
+
+      browser.notifications.create({
+        iconUrl: "icons/fox.jpg",
+        type: "basic",
+        title: "KidsPro alert",
+        message: 'Hi you are visiting a website you are not supposed to.',
+        contextMessage: 'this message is...'
       });
     }
 
