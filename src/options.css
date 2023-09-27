@@ -40,7 +40,6 @@ input[id^="allowed_"], input[id^="blocked_"] {
     place-self: stretch;
 }
 
-
 /*.button {
     color: #0060df;
     border: 0;

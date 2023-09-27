@@ -136,9 +136,11 @@ function displayBlockedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<li class=\"list-group-item\">"
-            html += items[i];
-            html += "</li>";
+            //html += "<li class=\"list-group-item\">"
+            html +="<tr>"
+            html +="<td>" + (i+1) + "</td>"
+            html += "<td>" + items[i] + "</td>";
+            //html += "</li>";
         }
     }
     console.log('display - ' + html);
@@ -510,16 +512,18 @@ window.addEventListener("beforeunload", adminLogout);
 //document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
 document.querySelector("#save").addEventListener("click", saveOptions);
 document.querySelector("#reset").addEventListener("click", resetOptions);
-document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
-document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
+//document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
+//document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
+document.querySelector("#addAllow").addEventListener("click", addAllowItem);
+document.querySelector("#addBlock").addEventListener("click", addBlockItem);
 document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
 document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
 //document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
 //document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
-document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
-document.querySelector("#clearSchedules").addEventListener("click", clearSchedulesWithPrompt);
-//document.querySelector("#addSchedule").addEventListener("click", addSchedule);
-//document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
+//document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
+//document.querySelector("#clearSchedules").addEventListener("click", clearSchedulesWithPrompt);
+document.querySelector("#addSchedule").addEventListener("click", addSchedule);
+document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
 //document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
 document.querySelector("#clearLogItems").addEventListener("click", clearLogsWithPrompt);
 

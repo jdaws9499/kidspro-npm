@@ -12,37 +12,42 @@
 </head>
 
 <body>
-    <div class="container-fluid bg-body">
+    <div class="container-fluid bg-body mx-auto p-2" style="width: 800px;">
         <h2 class="sticky-xl-top fw-bold pt-3 pt-xl-5 pb-2 pb-xl-3">Settings</h2>
         <div class="m-0 border-0">
             <form name="pref-form">
                 <article class="my-3" id="rating">
                     <div class="bd-heading align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
-                        <h3>Age Rating</h3>
+                        <h3 class="text-body-secondary">Age Rating</h3>
                     </div>
                     <div>
-                        <div class="mb-3">
-                            <label title="Something to identify the user" for="nickname" class="form-label"
-                                area-describedby="nicknamehelp">Nickname:</label>
-                            <input type="text" id="nickname" name="nickname" class="form-control" />
-                            <div id="nicknamehelp" class="formtext">Identify the user kiddo</div>
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label title="Something to identify the user" for="nickname" class="form-label lead"
+                                    area-describedby="nicknamehelp">Nickname:</label>
+                                <input type="text" id="nickname" name="nickname" class="form-control" />
+                                <div id="nicknamehelp" class="formtext"><small class="text-body-secondary">Identify the
+                                        user
+                                        kiddo</small></div>
+                            </div>
+                            <div class="mb-3 col-md-6">
+                                <label
+                                    title="Birth date to identify the user's age to be used against certificate verification"
+                                    for="bdate" class="form-label lead">Birtddate:</label>
+                                <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31"
+                                    class="form-control" required pattern="\d{4}-\d{2}-\d{2}" required autofocus />
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label
-                                title="Birth date to identify the user's age to be used against certificate verification"
-                                for="bdate" class="form-label">Birtddate:</label>
-                            <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31"
-                                class="form-control" required pattern="\d{4}-\d{2}-\d{2}" required autofocus />
-                        </div>
-                        <div class="mb-3">
-                                <label title="Age rating according to the user's birtddate" for="rating"
-                                    class="form-label" area-describedby="ratinghelp">Age rating:</label>
-                                <output type="text" name="rating" id="rating"></output>
-                                <div class="col-md-6">
-                                    <div class="bg-body-tertiary">
+                        <div class="mb-3 row">
+                            <label title="Age rating according to the user's birtddate" for="rating"
+                                class="form-label col-md-2 lead" area-describedby="ratinghelp">Rating:</label>
+                            <output type="text" name="rating" id="rating" class="display-6 col-md-2"></output>
+                            <div class="col-md-8 d-flex justify-content-start">
+                                <div class="bg-body-tertiary">
                                     <div id="ratinghelp" class="formtext ">
                                         <div class="table-responsive small">
-                                            <table class="table table-bordered table-sm">
+                                            <table class="table table-striped-columns table-sm">
+                                                <caption>List of ratings</caption>
                                                 <thead>
                                                     <tr>
                                                         <th>Rating</th>
@@ -74,40 +79,63 @@
                                             </table>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
+                            </div>
                         </div>
-                    </div>
                 </article>
+
                 <article class="my-3" id="urllist">
+                    <!--<fieldset class="kidspro-fieldset mt-3"-->
+                    <h3 class="text-body-secondary">Additional Block URL List</h3>
+                    <p class="text-body-secondary"><em>The following list enables to override the web sites' self
+                            declared
+                            age
+                            ratings to block additional urls.</em>
+                    </p>
+                    <div class="row">
+                        <!--<label title="These urls will be blocked from visiting regardless of the age rating of the site"
+                            for="blockedlist" class="lead">Blocked urls (overriden):</label-->
 
+                        <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
+                        <div class="col-md-10">
+                            <table class="table table-borderless table-danger table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Blocked url</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="displayBlocked">
 
-                </article>
-                <article class="my-3" id="schedule">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="form-floating mb-3 col-md">
+                                <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*"
+                                    class="form-control" />
+                                <label for="newBlockItem">Add new block url</label>
 
-                </article>
-                <fieldset class="kidspro-fieldset mt-3">
-                    <h2>Allow/Block URL List (Optional)</h2>
-                    <p class="kidspro-legend">The following list enables to override the web sites' self declared age
-                        ratings.
-                        You can add urls to block altdough they are allowed for the user's age. Or you can add urls to
-                        allow
-                        altdough they are not allowed for the user's age.
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center">
+                                <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
+                                <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
+                            </div>
+                        </div>
+                        <!--<div>
+                            <ul id="displayBlocked" class="list-group list-group-flush"></ul>
+                        </div-->
+                    </div>
+                    <h3 class="text-body-secondary">Additinoal Allow URL List</h3>
+                    <p class="text-body-secondary"><em>The following list enables to override the web sites' self
+                            declared
+                            age
+                            ratings to allow additional urls.</em>
                     </p>
                     <div class="kidspro-input mb-2">
-                        <label title="These urls will be blocked from visiting regardless of the age rating of the site"
-                            for="blockedlist">Blocked urls (overriden):</label>
-                        <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*" />
-                        <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
-                        <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
-                        <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
-                        <div>
-                            <ul id="displayBlocked" class="list-group list-group-flush"></ul>
-                        </div>
-                    </div>
-                    <div class="kidspro-input mb-2">
                         <label title="These urls will be allowed to visit regardless of the age rating of the site"
-                            for="allowedlist">Allowed urls (overriden):</label>
+                            for="allowedlist" class="lead">Allowed urls (overriden):</label>
                         <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
                             pattern="https://.*" />
                         <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
@@ -117,7 +145,8 @@
                         <div>
                             <ul id="displayAllowed" class="list-group list-group-flush"></ul>
                         </div>
-                        <label title="These list assumed to have the age ratings for the youngest.">Allowed urls for
+                        <label title="These list assumed to have the age ratings for the youngest." class="lead">Allowed
+                            urls for
                             all:
                         </label>
                         <div>
@@ -127,20 +156,25 @@
                         <output type="hidden" id="password" name="password"></output>
                         <output type="hidden" id="logs" name="logs"></output>
                     </div>
-                </fieldset>
-                <fieldset class="kidspro-fieldset mt-3">
-                    <h2>Browse Schedule</h2>
-                    <p class="kidspro-legend">The browse schedule enables to add allwed time schedules to browse. You
-                        can
-                        add
-                        time and days of the week. It's allowed all the time as default. Uncheck box if you want to add
-                        certain allow times. If there is no schedule set, it's allowed all the time.
+                    <!--</fieldset-->
+                </article>
+
+                <article class="my-3" id="schedule">
+
+                    <h3 class="text-body-secondary">Browse Schedule</h3>
+                    <p class="text-body-secondary"><em>The browse schedule enables to add allwed time schedules to
+                            browse.
+                            You
+                            can add time and days of the week. It's allowed all the time as default. Uncheck box if you
+                            want
+                            to add
+                            certain allow times. If there is no schedule set, it's allowed all the time. </em>
                     </p>
                     <div class="input-group mt-3 mb-2 row">
                         <div class="col-auto">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="mon" id="day1">
-                                <label class="form-check-label" for="day1">
+                                <label class="form-check-label lead" for="day1">
                                     Monday
                                 </label>
                             </div>
@@ -205,27 +239,31 @@
                         <div id="displaySchedule" class="col-4">
                         </div>
                     </div>
-                </fieldset>
+                </article>
                 <div class="action-container mt-2">
                     <button type="submit" id="save" class="btn btn-primary">Save</button>
                     <button type="reset" id="reset" class="btn btn-secondary">Reset</button>
                 </div>
             </form>
-        </div>
-        <div class="mt-5">
-            <h2>Violated Access Logs</h2>
-            <p class="kidspro-legend">You can monitor the history of visiting sites that are either beyond the user's
-                age group, in the specified blocked URL list or outside the specified allowed browsing schedule.</p>
-            <p class="kidspro-legend">We can only keep minimal history for KidsPro as the browser storage is limited
-                (5MB).</p>
+            <article class="my-3" id="schedule">
+                <h3 class="text-body-secondary">Violated Access Logs</h3>
+                <p class="text-body-secondary"><em>You can monitor the history of visiting sites that are either beyond
+                        the
+                        user's
+                        age group, in the specified blocked URL list or outside the specified allowed browsing
+                        schedule.</em></p>
+                <p class="text-body-secondary"><em>We can only keep minimal history for KidsPro as the browser storage
+                        is limited
+                        (5MB).</em></p>
 
-            <div class="mb2 row">
-                <output id="logs" name="logs"></output>
-                <div id="displayLogs" class="col-9">
+                <div class="mb2 row">
+                    <output id="logs" name="logs"></output>
+                    <div id="displayLogs" class="col-9">
+                    </div>
                 </div>
-            </div>
-            <input type="button" id="clearLogItems" value="Clear" class="btn btn-secondary" />
+                <input type="button" id="clearLogItems" value="Clear" class="btn btn-secondary" />
 
+            </article>
         </div>
     </div>
     <script src="options.js"></script>
