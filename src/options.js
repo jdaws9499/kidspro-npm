@@ -18,7 +18,7 @@ function promptAdminPassword(action) {
             height: 400,
             width: 600
         }
-    );s
+    );
 }
 
 function createAdminPassword() {
@@ -448,7 +448,7 @@ function restoreOptions() {
             console.log('data ' + JSON.stringify(res.kidsProUser));
             document.querySelector("#nickname").value = res.kidsProUser.preference.nickname || 'Not Set';
             document.querySelector("#bdate").value = res.kidsProUser.preference.bdate || getMinimumDate;
-            document.querySelector("#rating").value = res.kidsProUser.preference.rating || 'NA';
+            document.querySelector("output[name='rating']").value = res.kidsProUser.preference.rating || 'NA';
             if (res.kidsProUser.preference.blocked) {
                 document.querySelector("output[name='blockedUrls']").value = res.kidsProUser.preference.blocked.urls;
                 displayBlockedItems(JSON.parse(res.kidsProUser.preference.blocked.urls));
@@ -506,10 +506,10 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 window.addEventListener("beforeunload", adminLogout);
-document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
-document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
-//document.querySelector("#save").addEventListener("click", saveOptions);
-//document.querySelector("#reset").addEventListener("click", resetOptions);
+//document.querySelector("#save").addEventListener("click", saveOptionsWithPrompt);
+//document.querySelector("#reset").addEventListener("click", resetOptionsWithPrompt);
+document.querySelector("#save").addEventListener("click", saveOptions);
+document.querySelector("#reset").addEventListener("click", resetOptions);
 document.querySelector("#addAllow").addEventListener("click", addAllowItemWithPrompt);
 document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
 document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);

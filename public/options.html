@@ -8,195 +8,224 @@
     <title>KidsPro - Settings</title>
     <link rel="shortcut icon" href="icons/abc_icon.ico">
     <link rel="stylesheet" href="./options.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <div class="container-md mt-3">
-        <form name="pref-form">
-            <fieldset class="kidspro-fieldset mt-2">
-                <h2 class="kidspro-h2">Required User Setting</h2>
-                <p class="kidspro-legend">Please enter the following information to identify user's age. The information
-                    is
-                    stored in your Windows storage and in order to verificate the web site's certification but not
-                    shared
-                    anywhere else. </p>
-                <div class="kidspro-input">
-                    <label title="Sometding to identify the user" for="nickname">Nickname:</label>
-                    <input type="text" id="nickname" name="nickname" />
-                </div>
-                <div class="nativeDatePicker kidspro-input">
-                    <label title="Birth date to identify the user's age to be used against certificate verification"
-                        for="bdate">Birtddate:</label>
-                    <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31" required
-                        pattern="\d{4}-\d{2}-\d{2}" required autofocus />
-                </div>
-                <div class="kidspro-input">
-                    <label title="Age rating according to the user's birtddate" for="rating">Age rating:</label>
-                    <output name="rating" id="rating" />
-                </div>
-                <div>
-                    <table>
-                        <tr>
-                            <th>Rating</th>
-                            <th>Age</th>
-                        </tr>
-                        <tr>
-                            <td>P (preschool)</td>
-                            <td>0-5</td>
-                        </tr>
-                        <tr>
-                            <td>E (elementary)</td>
-                            <td>6-9</td>
-                        </tr>
-                        <tr>
-                            <td>T (transition)</td>
-                            <td>10-12</td>
-                        </tr>
-                        <tr>
-                            <td>ET (early-teens)</td>
-                            <td>13-15</td>
-                        </tr>
-                        <tr>
-                            <td>LT (late-teens)</td>
-                            <td>16-17</td>
-                        </tr>
-                    </table>
-                </div>
-            </fieldset>
-            <fieldset class="kidspro-fieldset mt-3">
-                <h2 class="kidspro-h2">Allow/Block URL List (Optional)</h2>
-                <p class="kidspro-legend">The following list enables to override the web sites' self declared age
-                    ratings.
-                    You can add urls to block altdough they are allowed for the user's age. Or you can add urls to allow
-                    altdough they are not allowed for the user's age.
-                </p>
-                <div class="kidspro-input mb-2">
-                    <label title="These urls will be blocked from visiting regardless of the age rating of the site"
-                        for="blockedlist">Blocked urls (overriden):</label>
-                    <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*" />
-                    <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
-                    <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
-                    <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
-                    <div>
-                        <ul id="displayBlocked" class="list-group list-group-flush"></ul>
+    <div class="container-fluid bg-body">
+        <h2 class="sticky-xl-top fw-bold pt-3 pt-xl-5 pb-2 pb-xl-3">Settings</h2>
+        <div class="m-0 border-0">
+            <form name="pref-form">
+                <article class="my-3" id="rating">
+                    <div class="bd-heading align-self-start mt-5 mb-3 mt-xl-0 mb-xl-2">
+                        <h3>Age Rating</h3>
                     </div>
-                </div>
-                <div class="kidspro-input mb-2">
-                    <label title="These urls will be allowed to visit regardless of the age rating of the site"
-                        for="allowedlist">Allowed urls (overriden):</label>
-                    <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
-                        pattern="https://.*" />
-                    <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
-                    <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
+                    <div>
+                        <div class="mb-3">
+                            <label title="Something to identify the user" for="nickname" class="form-label"
+                                area-describedby="nicknamehelp">Nickname:</label>
+                            <input type="text" id="nickname" name="nickname" class="form-control" />
+                            <div id="nicknamehelp" class="formtext">Identify the user kiddo</div>
+                        </div>
+                        <div class="mb-3">
+                            <label
+                                title="Birth date to identify the user's age to be used against certificate verification"
+                                for="bdate" class="form-label">Birtddate:</label>
+                            <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31"
+                                class="form-control" required pattern="\d{4}-\d{2}-\d{2}" required autofocus />
+                        </div>
+                        <div class="mb-3">
+                                <label title="Age rating according to the user's birtddate" for="rating"
+                                    class="form-label" area-describedby="ratinghelp">Age rating:</label>
+                                <output type="text" name="rating" id="rating"></output>
+                                <div class="col-md-6">
+                                    <div class="bg-body-tertiary">
+                                    <div id="ratinghelp" class="formtext ">
+                                        <div class="table-responsive small">
+                                            <table class="table table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Rating</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>P</td>
+                                                        <td>Preschool (0-5, preliterate and early literacy)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>E</td>
+                                                        <td>Elementary (6-9, core primary school years)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>T</td>
+                                                        <td>Transition (10-12)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>ET</td>
+                                                        <td>Early Teen (13-15)</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>LT</td>
+                                                        <td>Late Teen (16-17)</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                        </div>
+                    </div>
+                </article>
+                <article class="my-3" id="urllist">
 
-                    <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
-                    <div>
-                        <ul id="displayAllowed" class="list-group list-group-flush"></ul>
+
+                </article>
+                <article class="my-3" id="schedule">
+
+                </article>
+                <fieldset class="kidspro-fieldset mt-3">
+                    <h2>Allow/Block URL List (Optional)</h2>
+                    <p class="kidspro-legend">The following list enables to override the web sites' self declared age
+                        ratings.
+                        You can add urls to block altdough they are allowed for the user's age. Or you can add urls to
+                        allow
+                        altdough they are not allowed for the user's age.
+                    </p>
+                    <div class="kidspro-input mb-2">
+                        <label title="These urls will be blocked from visiting regardless of the age rating of the site"
+                            for="blockedlist">Blocked urls (overriden):</label>
+                        <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*" />
+                        <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
+                        <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
+                        <output type="hidden" id="blockedUrls" name="blockedUrls"></output>
+                        <div>
+                            <ul id="displayBlocked" class="list-group list-group-flush"></ul>
+                        </div>
                     </div>
-                    <label title="These list assumed to have the age ratings for the youngest.">Allowed urls for all: </label>
-                    <div> 
-                        <ul id="displayAllowedForAll" class="list-group list-group-flush list-group-item-success"></ul>
+                    <div class="kidspro-input mb-2">
+                        <label title="These urls will be allowed to visit regardless of the age rating of the site"
+                            for="allowedlist">Allowed urls (overriden):</label>
+                        <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
+                            pattern="https://.*" />
+                        <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
+                        <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
+
+                        <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
+                        <div>
+                            <ul id="displayAllowed" class="list-group list-group-flush"></ul>
+                        </div>
+                        <label title="These list assumed to have the age ratings for the youngest.">Allowed urls for
+                            all:
+                        </label>
+                        <div>
+                            <ul id="displayAllowedForAll" class="list-group list-group-flush list-group-item-success">
+                            </ul>
+                        </div>
+                        <output type="hidden" id="password" name="password"></output>
+                        <output type="hidden" id="logs" name="logs"></output>
                     </div>
-                    <output type="hidden" id="password" name="password"></output>
-                    <output type="hidden" id="logs" name="logs"></output>
+                </fieldset>
+                <fieldset class="kidspro-fieldset mt-3">
+                    <h2>Browse Schedule</h2>
+                    <p class="kidspro-legend">The browse schedule enables to add allwed time schedules to browse. You
+                        can
+                        add
+                        time and days of the week. It's allowed all the time as default. Uncheck box if you want to add
+                        certain allow times. If there is no schedule set, it's allowed all the time.
+                    </p>
+                    <div class="input-group mt-3 mb-2 row">
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="mon" id="day1">
+                                <label class="form-check-label" for="day1">
+                                    Monday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="tues" id="day2">
+                                <label class="form-check-label" for="day2">
+                                    Tuesday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="wednes" id="day3">
+                                <label class="form-check-label" for="day3">
+                                    Wednesday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="thurs" id="day4">
+                                <label class="form-check-label" for="day4">
+                                    Thursday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="fri" id="day5">
+                                <label class="form-check-label" for="day5">
+                                    Friday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="satur" id="day6">
+                                <label class="form-check-label" for="day6">
+                                    Saturday
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="sun" id="day0">
+                                <label class="form-check-label" for="day0">
+                                    Sunday
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <label for="fromTime" class="col-sm-2 col-form-label">From:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="time" class="form-control" id="fromTime" />
+                        </div>
+                        <div class="col-auto">
+                            <label for="toTime" class="col-sm-2 col-form-label">To:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="time" class="form-control" id="toTime" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="button" id="addSchedule" value="Add" class="btn btn-primary" />
+                        </div>
+                        <div class="col-auto">
+                            <input type="button" id="clearSchedules" value="Clear" class="btn btn-secondary" />
+                        </div>
+                    </div>
+                    <div class="input-group mb-2 row">
+                        <output type="hidden" id="schedules" name="schedules"></output>
+                        <div id="displaySchedule" class="col-4">
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="action-container mt-2">
+                    <button type="submit" id="save" class="btn btn-primary">Save</button>
+                    <button type="reset" id="reset" class="btn btn-secondary">Reset</button>
                 </div>
-            </fieldset>
-            <fieldset class="kidspro-fieldset mt-3">
-                <h2 class="kidspro-h2">Browse Schedule</h2>
-                <p class="kidspro-legend">The browse schedule enables to add allwed time schedules to browse. You can
-                    add
-                    time and days of the week. It's allowed all the time as default. Uncheck box if you want to add
-                    certain allow times. If there is no schedule set, it's allowed all the time.
-                </p>
-                <div class="input-group mt-3 mb-2 row">
-                    <div class="col-auto">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="mon" id="day1">
-                            <label class="form-check-label" for="day1">
-                                Monday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="tues" id="day2">
-                            <label class="form-check-label" for="day2">
-                                Tuesday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="wednes" id="day3">
-                            <label class="form-check-label" for="day3">
-                                Wednesday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="thurs" id="day4">
-                            <label class="form-check-label" for="day4">
-                                Thursday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="fri" id="day5">
-                            <label class="form-check-label" for="day5">
-                                Friday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="satur" id="day6">
-                            <label class="form-check-label" for="day6">
-                                Saturday
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="sun" id="day0">
-                            <label class="form-check-label" for="day0">
-                                Sunday
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <label for="fromTime" class="col-sm-2 col-form-label">From:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="time" class="form-control" id="fromTime" />
-                    </div>
-                    <div class="col-auto">
-                        <label for="toTime" class="col-sm-2 col-form-label">To:</label>
-                    </div>
-                    <div class="col-auto">
-                        <input type="time" class="form-control" id="toTime" />
-                    </div>
-                    <div class="col-auto">
-                        <input type="button" id="addSchedule" value="Add" class="btn btn-primary" />
-                    </div>
-                    <div class="col-auto">
-                        <input type="button" id="clearSchedules" value="Clear" class="btn btn-secondary" />
-                    </div>
-                </div>
-                <div class="input-group mb-2 row">
-                    <output type="hidden" id="schedules" name="schedules"></output>
-                    <div id="displaySchedule" class="col-4">
-                    </div>
-                </div>
-            </fieldset>
-            <div class="action-container mt-2">
-                <button type="submit" id="save" class="btn btn-primary">Save</button>
-                <button type="reset" id="reset" class="btn btn-secondary">Reset</button>
-            </div>
-        </form>
+            </form>
+        </div>
         <div class="mt-5">
-            <h2 class="kidspro-h2">Violated Access Logs</h2>
-            <p class="kidspro-legend">You can monitor the history of visiting sites that are either beyond the user's age group, in the specified blocked URL list or outside the specified allowed browsing schedule.</p>
-            <p class="kidspro-legend">We can only keep minimal history for KidsPro as the browser storage is limited (5MB).</p>
-            
+            <h2>Violated Access Logs</h2>
+            <p class="kidspro-legend">You can monitor the history of visiting sites that are either beyond the user's
+                age group, in the specified blocked URL list or outside the specified allowed browsing schedule.</p>
+            <p class="kidspro-legend">We can only keep minimal history for KidsPro as the browser storage is limited
+                (5MB).</p>
+
             <div class="mb2 row">
                 <output id="logs" name="logs"></output>
                 <div id="displayLogs" class="col-9">
                 </div>
             </div>
             <input type="button" id="clearLogItems" value="Clear" class="btn btn-secondary" />
-                    
+
         </div>
     </div>
     <script src="options.js"></script>
