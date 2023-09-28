@@ -38,7 +38,7 @@
                                     class="form-control" required pattern="\d{4}-\d{2}-\d{2}" required autofocus />
                             </div>
                         </div>
-                        <div class="mb-3 row">
+                        <div class="mb-5 row">
                             <label title="Age rating according to the user's birtddate" for="rating"
                                 class="form-label col-md-2 lead" area-describedby="ratinghelp">Rating:</label>
                             <output type="text" name="rating" id="rating" class="display-6 col-md-2"></output>
@@ -85,7 +85,7 @@
                         </div>
                 </article>
 
-                <article class="my-3" id="urllist">
+                <article class="my-5" id="urllist">
                     <!--<fieldset class="kidspro-fieldset mt-3"-->
                     <h3 class="text-body-secondary">Additional Block URL List</h3>
                     <p class="text-body-secondary"><em>The following list enables to override the web sites' self
@@ -93,7 +93,7 @@
                             age
                             ratings to block additional urls.</em>
                     </p>
-                    <div class="row">
+                    <div class="row mb-5">
                         <!--<label title="These urls will be blocked from visiting regardless of the age rating of the site"
                             for="blockedlist" class="lead">Blocked urls (overriden):</label-->
 
@@ -113,46 +113,54 @@
                         </div>
                         <div class="row">
                             <div class="form-floating mb-3 col-md">
-                                <input type="url" id="newBlockItem" name="newBlockItem" pattern="https://.*"
+                                <input type="url" id="newBlockItem" name="newBlockItem" placeholder="https://www.example.com" pattern="https://.*"
                                     class="form-control" />
-                                <label for="newBlockItem">Add new block url</label>
-
+                                <label for="newBlockItem" class="lead">Add new block url</label>
                             </div>
                             <div class="col-md-4 d-flex align-items-center">
                                 <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
                                 <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
                             </div>
                         </div>
-                        <!--<div>
-                            <ul id="displayBlocked" class="list-group list-group-flush"></ul>
-                        </div-->
                     </div>
-                    <h3 class="text-body-secondary">Additinoal Allow URL List</h3>
+                    <h3 class="text-body-secondary">Additional Allow URL List</h3>
                     <p class="text-body-secondary"><em>The following list enables to override the web sites' self
                             declared
                             age
                             ratings to allow additional urls.</em>
                     </p>
-                    <div class="kidspro-input mb-2">
-                        <label title="These urls will be allowed to visit regardless of the age rating of the site"
-                            for="allowedlist" class="lead">Allowed urls (overriden):</label>
-                        <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
-                            pattern="https://.*" />
-                        <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
-                        <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
-
+                    <div class="row mb-5">
                         <output type="hidden" id="allowedUrls" name="allowedUrls"></output>
-                        <div>
-                            <ul id="displayAllowed" class="list-group list-group-flush"></ul>
+                        <div class="col-md-10">
+                            <table class="table table-borderless table-success table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Allowed url</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="displayAllowed">
+
+                                </tbody>
+                            </table>
                         </div>
-                        <label title="These list assumed to have the age ratings for the youngest." class="lead">Allowed
-                            urls for
-                            all:
-                        </label>
-                        <div>
+                        <div class="row">
+                            <div class="form-floating mb-3 col-md">
+                                <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
+                                    pattern="https://.*" class="form-control"/>    
+                                <label for="newAllowItem" class="lead">Add new allow url</label>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center">
+                                <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
+                                <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kidspro-input mb-2">
+                        <!--<div>
                             <ul id="displayAllowedForAll" class="list-group list-group-flush list-group-item-success">
                             </ul>
-                        </div>
+                        </div-->
                         <output type="hidden" id="password" name="password"></output>
                         <output type="hidden" id="logs" name="logs"></output>
                     </div>
@@ -162,16 +170,22 @@
                 <article class="my-3" id="schedule">
 
                     <h3 class="text-body-secondary">Browse Schedule</h3>
-                    <p class="text-body-secondary"><em>The browse schedule enables to add allwed time schedules to
-                            browse.
-                            You
-                            can add time and days of the week. It's allowed all the time as default. Uncheck box if you
-                            want
-                            to add
-                            certain allow times. If there is no schedule set, it's allowed all the time. </em>
+                    <p class="text-body-secondary"><em>Set schedules for allowed browsing time.</em>
                     </p>
                     <div class="input-group mt-3 mb-2 row">
-                        <div class="col-auto">
+                        <div class="form-floating col-md">
+                            <select class="form-select" id="daySelect">
+                                <option selected value="day1" >Monday</option>
+                                <option value="day2">Tuesday</option>
+                                <option value="day3">Wednesday</option>
+                                <option value="day4">Thursday</option>
+                                <option value="day5">Friday</option>
+                                <option value="day6">Saturday</option>
+                                <option value="day0">Sunday</option>
+                              </select>
+                              <label for="daySelect" class="lead">New schedule</label>
+                        </div>
+                        <!--<div class="col-auto">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="mon" id="day1">
                                 <label class="form-check-label lead" for="day1">
@@ -214,7 +228,7 @@
                                     Sunday
                                 </label>
                             </div>
-                        </div>
+                        </div-->
                         <div class="col-auto">
                             <label for="fromTime" class="col-sm-2 col-form-label">From:</label>
                         </div>

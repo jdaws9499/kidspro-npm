@@ -119,9 +119,9 @@ function displayAllowedItems(itemsStr) {
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<li class=\"list-group-item\">"
-            html += items[i];
-            html += "</li>";
+            html +="<tr>"
+            html +="<td>" + (i+1) + "</td>"
+            html += "<td>" + items[i] + "</td>";
         }
     }
     console.log('display - ' + html);
@@ -215,7 +215,7 @@ function displaySchedules(schedules) {
         for (let i = 0; i < items.length; i++) {
             html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
             html += "<li class=\"list-group-item flex-fill\">"
-            html += items[i].day + 'day: ';
+            html += getDayOfWeek(items[i].dayId) + ': ';
             html += "</li>";
 
             html += "<li class=\"list-group-item\">"
@@ -229,45 +229,55 @@ function displaySchedules(schedules) {
 
 }
 
+function getDayOfWeek(dayId) {
+    if (dayId) {
+        if (dayId === 'day1') {
+            return "Monday";
+        } else if (dayId === 'day2') {
+            return "Tuesday";
+        } else if (dayId === 'day3') {
+            return "Wednesday";
+        } else if (dayId === 'day4') {
+            return "Thursday";
+        } else if (dayId === 'day5') {
+            return "Friday";
+        } else if (dayId === 'day6') {
+            return "Saturday";
+        } else if (dayId === 'day0') {
+            return "Sunday";
+        }
+    } else {
+        return 'NA';
+    }
+}
+
 async function addScheduleWithPrompt(e) {
     promptAdminPassword("addSchedule");
     e.preventDefault();
 }
 
 function clearNewScheduleField() {
-    document.querySelector("#day0").checked = false;
-    document.querySelector("#day1").checked = false;
-    document.querySelector("#day2").checked = false;
-    document.querySelector("#day3").checked = false;
-    document.querySelector("#day4").checked = false;
-    document.querySelector("#day5").checked = false;
-    document.querySelector("#day6").checked = false;
+    document.querySelector("#daySelect").selected = false;
+    
     document.querySelector("#fromTime").value = "";
     document.querySelector("#toTime").value = "";
 }
 
-function addCheckedDay(input, fromTime, toTime, days) {
-    if (input.checked === true) {
-        days.push({ dayId: input.id, day: input.value, from: fromTime, to: toTime });
-    }
-    return days;
+function addCheckedDay(day, fromTime, toTime, days) {
+    days.push({ dayId: day, from: fromTime, to: toTime });
+    //return days;
 }
 
 async function addSchedule() {
-    console.log('addSchedule');
+    console.log('addSchedule + ' + document.querySelector("#daySelect").value);
     let days = [];
     let fromTime = document.querySelector("#fromTime").value;
     let toTime = document.querySelector("#toTime").value;
-    console.log('from - ' + fromTime + ' to ' + toTime);
+    let selectedDay = document.querySelector("#daySelect").value;
+    
+    console.log(selectedDay + ': from - ' + fromTime + ' to ' + toTime);
 
-    addCheckedDay(document.querySelector("#day0"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day1"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day2"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day3"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day4"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day5"), fromTime, toTime, days);
-    addCheckedDay(document.querySelector("#day6"), fromTime, toTime, days);
-
+    addCheckedDay(selectedDay, fromTime, toTime, days);
     let schedules = JSON.parse(document.querySelector("#schedules").value || "[]"); // array strings to array object 
     console.log('adding - ' + JSON.stringify(days));
     schedules = schedules.concat(days);
@@ -459,7 +469,7 @@ function restoreOptions() {
                 document.querySelector("output[name='allowedUrls']").value = res.kidsProUser.preference.allowed.urls;
                 displayAllowedItems(JSON.parse(res.kidsProUser.preference.allowed.urls));
             }
-            displayAllowedForAll(allowedForAll);
+            //displayAllowedForAll(allowedForAll);
             if (res.kidsProUser.preference.schedules) {
                 document.querySelector("output[name='schedules']").value = res.kidsProUser.preference.schedules;
                 displaySchedules(JSON.parse(res.kidsProUser.preference.schedules));
@@ -516,10 +526,10 @@ document.querySelector("#reset").addEventListener("click", resetOptions);
 //document.querySelector("#addBlock").addEventListener("click", addBlockItemWithPrompt);
 document.querySelector("#addAllow").addEventListener("click", addAllowItem);
 document.querySelector("#addBlock").addEventListener("click", addBlockItem);
-document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
-document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
-//document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
-//document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
+//document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItemsWithPrompt);
+//document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItemsWithPrompt);
+document.querySelector("#clearAllowItems").addEventListener("click", clearAllowItems);
+document.querySelector("#clearBlockItems").addEventListener("click", clearBlockItems);
 //document.querySelector("#addSchedule").addEventListener("click", addScheduleWithPrompt);
 //document.querySelector("#clearSchedules").addEventListener("click", clearSchedulesWithPrompt);
 document.querySelector("#addSchedule").addEventListener("click", addSchedule);
