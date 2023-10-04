@@ -25,6 +25,7 @@
     "asn1js": "^3.0.5",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.1",
+    "bootstrap-icons": "^1.11.1",
     "node-cache": "^5.1.2",
     "pkijs": "^3.0.14"
   }

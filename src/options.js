@@ -213,7 +213,13 @@ function displaySchedules(schedules) {
     let items = schedules; // string to json object
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
+            html += "<tr>";
+            html += "<td>" + getDayOfWeek(items[i].dayId) + "</td>";
+            html += "<td>" + items[i].from + "</td>";
+            html += "<td>" + items[i].to + "</td>";
+            //html += "<td><button type=\"button\" id=\"removeSchedule\" class=\"btn btn-secondary btn-sm\"><i class=\"bi bi-x-circle-fill\"></i> Delete</button></td>";
+            html += "</tr>";
+            /*html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex\">";
             html += "<li class=\"list-group-item flex-fill\">"
             html += getDayOfWeek(items[i].dayId) + ': ';
             html += "</li>";
@@ -222,7 +228,7 @@ function displaySchedules(schedules) {
             html += items[i].from + ' - ' + items[i].to;
             html += "</li>";
 
-            html += "</ul>";
+            html += "</ul>";*/
         }
     }
     document.querySelector("#displaySchedule").innerHTML = html;
@@ -394,6 +400,7 @@ async function clearBlockItems() {
     saveOptions();
 }
 
+
 function getRating(birthday) {
     let age = calculateAge(birthday);
     console.log('age: ' + age);
@@ -534,6 +541,9 @@ document.querySelector("#clearBlockItems").addEventListener("click", clearBlockI
 //document.querySelector("#clearSchedules").addEventListener("click", clearSchedulesWithPrompt);
 document.querySelector("#addSchedule").addEventListener("click", addSchedule);
 document.querySelector("#clearSchedules").addEventListener("click", clearSchedules);
-//document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
-document.querySelector("#clearLogItems").addEventListener("click", clearLogsWithPrompt);
+document.querySelector("#clearLogItems").addEventListener("click", clearLogs);
+//document.querySelector("#clearLogItems").addEventListener("click", clearLogsWithPrompt);
+
+
+
 

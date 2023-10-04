@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="icons/abc_icon.ico">
     <link rel="stylesheet" href="./options.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -87,7 +88,7 @@
 
                 <article class="my-5" id="urllist">
                     <!--<fieldset class="kidspro-fieldset mt-3"-->
-                    <h3 class="text-body-secondary">Additional Block URL List</h3>
+                    <h3 class="text-body-secondary">Additional Block Websites</h3>
                     <p class="text-body-secondary"><em>The following list enables to override the web sites' self
                             declared
                             age
@@ -103,7 +104,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Blocked url</th>
+                                        <th>Blocked website</th>
                                     </tr>
                                 </thead>
                                 <tbody id="displayBlocked">
@@ -112,18 +113,22 @@
                             </table>
                         </div>
                         <div class="row">
-                            <div class="form-floating mb-3 col-md">
-                                <input type="url" id="newBlockItem" name="newBlockItem" placeholder="https://www.example.com" pattern="https://.*"
-                                    class="form-control" />
-                                <label for="newBlockItem" class="lead">Add new block url</label>
+                            <div class="form-floating mb-3 col-md-7">
+                                <input type="url" id="newBlockItem" name="newBlockItem"
+                                    placeholder="https://www.example.com" pattern="https://.*" class="form-control" />
+                                <label for="newBlockItem" class="lead">Add block url</label>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
-                                <input type="button" id="addBlock" value="Add" class="btn btn-primary" />
-                                <input type="button" id="clearBlockItems" value="Clear" class="btn btn-secondary" />
+                            <div class="col-md-5 d-flex align-items-center">
+                                <div class="col-sm-4">
+                                    <button type="add" id="addBlock" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add</button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="clear" id="clearBlockItems" class="btn btn-secondary"><i class="bi bi-x-circle-fill"></i> Clear</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <h3 class="text-body-secondary">Additional Allow URL List</h3>
+                    <h3 class="text-body-secondary">Additional Allow Websites</h3>
                     <p class="text-body-secondary"><em>The following list enables to override the web sites' self
                             declared
                             age
@@ -136,7 +141,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Allowed url</th>
+                                        <th>Allowed website</th>
                                     </tr>
                                 </thead>
                                 <tbody id="displayAllowed">
@@ -145,14 +150,18 @@
                             </table>
                         </div>
                         <div class="row">
-                            <div class="form-floating mb-3 col-md">
-                                <input type="url" id="newAllowItem" name="newAllowItem" placeholder="https://www.example.com"
-                                    pattern="https://.*" class="form-control"/>    
-                                <label for="newAllowItem" class="lead">Add new allow url</label>
+                            <div class="form-floating mb-3 col-md-7">
+                                <input type="url" id="newAllowItem" name="newAllowItem"
+                                    placeholder="https://www.example.com" pattern="https://.*" class="form-control" />
+                                <label for="newAllowItem" class="lead">Add allow url</label>
                             </div>
-                            <div class="col-md-4 d-flex align-items-center">
-                                <input type="button" id="addAllow" value="Add" class="btn btn-primary" />
-                                <input type="button" id="clearAllowItems" value="Clear" class="btn btn-secondary" />
+                            <div class="col-md-5 d-flex align-items-center">
+                                <div class="col-sm-4">
+                                    <button type="add" id="addAllow" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add</button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="clear" id="clearAllowItems" class="btn btn-secondary"><i class="bi bi-x-circle-fill"></i> Clear</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -170,93 +179,68 @@
                 <article class="my-3" id="schedule">
 
                     <h3 class="text-body-secondary">Browse Schedule</h3>
-                    <p class="text-body-secondary"><em>Set schedules for allowed browsing time.</em>
+                    <p class="text-body-secondary"><em>Set schedules to restrict browsing time.</em>
                     </p>
+                    <div class="mt-3 mb-2 row">
+                        <div class="col-md-10">
+                            <table id="scheduleTable" class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Start time</th>
+                                        <th>End time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="displaySchedule" class="lead">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <div class="input-group mt-3 mb-2 row">
-                        <div class="form-floating col-md">
+                        <div class="form-floating col-sm-3">
                             <select class="form-select" id="daySelect">
-                                <option selected value="day1" >Monday</option>
+                                <option selected value="day1">Monday</option>
                                 <option value="day2">Tuesday</option>
                                 <option value="day3">Wednesday</option>
                                 <option value="day4">Thursday</option>
                                 <option value="day5">Friday</option>
                                 <option value="day6">Saturday</option>
                                 <option value="day0">Sunday</option>
-                              </select>
-                              <label for="daySelect" class="lead">New schedule</label>
+                            </select>
+                            <label for="daySelect" class="lead">Add schedule</label>
                         </div>
-                        <!--<div class="col-auto">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="mon" id="day1">
-                                <label class="form-check-label lead" for="day1">
-                                    Monday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="tues" id="day2">
-                                <label class="form-check-label" for="day2">
-                                    Tuesday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="wednes" id="day3">
-                                <label class="form-check-label" for="day3">
-                                    Wednesday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="thurs" id="day4">
-                                <label class="form-check-label" for="day4">
-                                    Thursday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="fri" id="day5">
-                                <label class="form-check-label" for="day5">
-                                    Friday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="satur" id="day6">
-                                <label class="form-check-label" for="day6">
-                                    Saturday
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="sun" id="day0">
-                                <label class="form-check-label" for="day0">
-                                    Sunday
-                                </label>
-                            </div>
-                        </div-->
-                        <div class="col-auto">
-                            <label for="fromTime" class="col-sm-2 col-form-label">From:</label>
+                        <div class="col-sm-1">
+                            <label for="fromTime" class="col-sm-2 lead">From:</label>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-sm-2">
                             <input type="time" class="form-control" id="fromTime" />
                         </div>
-                        <div class="col-auto">
-                            <label for="toTime" class="col-sm-2 col-form-label">To:</label>
+                        <div class="col-sm-1">
+                            <label for="toTime" class="col-sm-2 lead ">To:</label>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-sm-2">
                             <input type="time" class="form-control" id="toTime" />
                         </div>
                         <div class="col-auto">
-                            <input type="button" id="addSchedule" value="Add" class="btn btn-primary" />
+                            <!--<input type="button" id="addSchedule" value="Add" class="btn btn-primary"-->
+                            <button type="add" id="addSchedule" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add</button>
                         </div>
                         <div class="col-auto">
-                            <input type="button" id="clearSchedules" value="Clear" class="btn btn-secondary" />
+                            <button type="clear" id="clearSchedule" class="btn btn-secondary"><i class="bi bi-x-circle-fill"></i> Clear</button>
                         </div>
+                        <output type="hidden" id="schedules" name="schedules"></output>
                     </div>
-                    <div class="input-group mb-2 row">
+                    <!--div class="input-group mb-5 row">
                         <output type="hidden" id="schedules" name="schedules"></output>
                         <div id="displaySchedule" class="col-4">
                         </div>
-                    </div>
+                    </div-->
+                    
                 </article>
-                <div class="action-container mt-2">
-                    <button type="submit" id="save" class="btn btn-primary">Save</button>
-                    <button type="reset" id="reset" class="btn btn-secondary">Reset</button>
+                <div class="action-container mt-2 mb-5">
+                    <button type="submit" id="save" class="btn btn-primary"><i class="bi bi-save-fill"></i> Save<button>
+                            <button type="reset" id="reset" class="btn btn-secondary"><i class="bi bi-trash-fill"></i>
+                                Reset</button>
                 </div>
             </form>
             <article class="my-3" id="schedule">
@@ -275,8 +259,9 @@
                     <div id="displayLogs" class="col-9">
                     </div>
                 </div>
-                <input type="button" id="clearLogItems" value="Clear" class="btn btn-secondary" />
-
+                <div class="action-container mt-2 mb-5">
+                    <button type="reset" id="clearLogItems" class="btn btn-secondary"><i class="bi bi-trash-fill"></i> Clear Logs</button>
+                </div>
             </article>
         </div>
     </div>
