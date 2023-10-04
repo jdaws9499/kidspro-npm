@@ -226,7 +226,7 @@
                             <button type="add" id="addSchedule" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i> Add</button>
                         </div>
                         <div class="col-auto">
-                            <button type="clear" id="clearSchedule" class="btn btn-secondary"><i class="bi bi-x-circle-fill"></i> Clear</button>
+                            <button type="clear" id="clearSchedules" class="btn btn-secondary"><i class="bi bi-x-circle-fill"></i> Clear</button>
                         </div>
                         <output type="hidden" id="schedules" name="schedules"></output>
                     </div>
@@ -242,27 +242,28 @@
                             <button type="reset" id="reset" class="btn btn-secondary"><i class="bi bi-trash-fill"></i>
                                 Reset</button>
                 </div>
-            </form>
-            <article class="my-3" id="schedule">
-                <h3 class="text-body-secondary">Violated Access Logs</h3>
-                <p class="text-body-secondary"><em>You can monitor the history of visiting sites that are either beyond
-                        the
-                        user's
-                        age group, in the specified blocked URL list or outside the specified allowed browsing
-                        schedule.</em></p>
-                <p class="text-body-secondary"><em>We can only keep minimal history for KidsPro as the browser storage
-                        is limited
-                        (5MB).</em></p>
-
-                <div class="mb2 row">
-                    <output id="logs" name="logs"></output>
-                    <div id="displayLogs" class="col-9">
+                <article class="my-3" id="schedule">
+                    <h3 class="text-body-secondary">Violated Access Logs</h3>
+                    <p class="text-body-secondary"><em>You can monitor the history of visiting sites that are either beyond
+                            the
+                            user's
+                            age group, in the specified blocked URL list or outside the specified allowed browsing
+                            schedule.</em></p>
+                    <p class="text-body-secondary"><em>We can only keep minimal history for KidsPro as the browser storage
+                            is limited
+                            (5MB).</em></p>
+    
+                    <div class="mb2 row">
+                        <output id="logs" name="logs"></output>
+                        <div id="displayLogs" class="col-9">
+                        </div>
                     </div>
-                </div>
-                <div class="action-container mt-2 mb-5">
-                    <button type="reset" id="clearLogItems" class="btn btn-secondary"><i class="bi bi-trash-fill"></i> Clear Logs</button>
-                </div>
-            </article>
+                    <div class="action-container mt-2 mb-5">
+                        <button type="reset" id="clearLogItems" class="btn btn-secondary"><i class="bi bi-trash-fill"></i> Clear Logs</button>
+                    </div>
+                </article>
+            </form>
+           
         </div>
     </div>
     <script src="options.js"></script>
