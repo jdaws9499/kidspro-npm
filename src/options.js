@@ -155,7 +155,7 @@ function getBlockedReason(siteAccess) {
         reason = 'The site was blocked as it\'s in the block URL list';
     } else if (siteAccess === 'BBB') {
         reason = 'The site was blocked as it was outside the allowed schedule';
-    } else if (siteAccess === 'W') {
+    } else if (siteAccess === 'AW') {
         reason = 'The user accessed the site beyond age rating.'
     }
     return reason;
@@ -178,9 +178,9 @@ function displayLogs(logs) {
         for (let i = 0; i < items.length; i++) {
             let color = "list-group-item-info";
             let siteAccess = items[i].siteAccess;
-            if (siteAccess === 'W') {
+            if (siteAccess === 'AW') {
                 color = "list-group-item-warning";
-            } else if (siteAccess === 'BB') {
+            } else if (siteAccess === 'BB' || siteAccess === 'B') {
                 color = "list-group-item-danger";
             }
             html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex " + color + "\">";

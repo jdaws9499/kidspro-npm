@@ -7,7 +7,8 @@ const ratingCache = new NodeCache();
 
 const allowedForAll = [
   'https://protectkidsonline.ca',
-  'https://www.cybertip.ca'
+  'https://www.cybertip.ca',
+  'https://cybertip.ca'
 ];
 //'use strict';
 
@@ -38,12 +39,21 @@ const ratings = [
   'ET', // 13-15
   'LT']; // 16-17
 
+// siteRating
+// block priorities
+// p1: outside approved hours BBB
+// p2: blocked site BB
+// p3: age rating B
+
+// allow cases
+// allowed with warning
 const accessLevel = [
   'A', // Allow
-  'W', // Allowed with warning
-  'B',  // Block, blocked because of the age
-  'BB', // Blocked from list
-  'AA', // Allowed from list 
+  'AW', // Allowed with warning for teens
+  'B',  // Blocked age rating
+  'BB', // Blocked list
+  'BBB' // Blocked hours
+  //'AA', // Allowed from list 
 ]
 
 async function validateSite(details) {
@@ -58,38 +68,34 @@ async function validateSite(details) {
   //let siteUrl = details.url.replace(/\/$/, "");
   console.log('siteUrl origin - ' + siteUrl.origin);
   let siteAccess = 'A';
-  if (siteRating) {
+
+  if (allowedForAll.includes(siteUrl.origin) || siteRating) {
     console.log('**siteRating: ' + siteRating);
-    if (allowedForAll.includes(siteUrl.origin)) {
-      siteAccess = 'AA'; // help sites for allowed for all.. 
-    } else {
 
-      if (preference.rating && ratings.indexOf(preference.rating) > -1) {
-        ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
-        if (!ratingMatched) {
-          if (preference.rating === 'P' || preference.rating === 'E') {
-            siteAccess = 'B';
-          } else {
-            siteAccess = 'W';
-          }
-        }
-      }
-
-      if (preference.allowedUrls) {
-        allowed = preference.allowedUrls.indexOf(siteUrl.origin) > -1;
-        if (allowed) {
-          siteAccess = 'AA';
-        }
-      }
-
-      if (preference.blockedUrls) {
-        blocked = preference.blockedUrls.indexOf(siteUrl.origin) > -1;
-        if (blocked) {
-          siteAccess = 'BB';
+    if (!allowedForAll.includes(siteUrl.origin) && preference.rating && ratings.indexOf(preference.rating) > -1) {
+      ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
+      if (!ratingMatched) {
+        if (preference.rating === 'P' || preference.rating === 'E' || siteRating === 'NA') {
+          siteAccess = 'B';
+        } else {
+          siteAccess = 'AW'; // not the raiting but allowed with warning
         }
       }
     }
 
+    if (preference.allowedUrls) { // overrides everything above
+      allowed = preference.allowedUrls.indexOf(siteUrl.origin) > -1;
+      if (allowed) {
+        siteAccess = 'A';
+      }
+    }
+
+    if (preference.blockedUrls) { // overrides everything above
+      blocked = preference.blockedUrls.indexOf(siteUrl.origin) > -1;
+      if (blocked) {
+        siteAccess = 'BB';
+      }
+    }
     console.log('siteAccess - ' + siteAccess);
     ratingCache.set(siteUrl.origin, siteAccess, 10000);
 
@@ -104,6 +110,7 @@ async function validateSite(details) {
       urlRating: siteRating,
     });*/
   }
+
 }
 
 //browser.runtime.onMessage.addListener(handleSiteAccess)
@@ -117,7 +124,7 @@ async function getCertificateRating(details) {
     );
     if (securityInfo) {
       let cert = securityInfo.certificates[0];
-      console.log('certificate - ' + JSON.stringify(cert));
+      //console.log('certificate - ' + JSON.stringify(cert));
       let certificateChain = new Uint8Array(cert.rawDER).buffer;
       let asn1 = asn1js.fromBER(certificateChain);
 
@@ -126,11 +133,11 @@ async function getCertificateRating(details) {
         x509 = x509.toJSON();
         //console.log('x509 in pkijs - ' + x509);
         console.log('extensions - ' + JSON.stringify(x509.extensions));
-        let san = getX509Ext(x509.extensions, '2.5.29.17').parsedValue;
+        /*let san = getX509Ext(x509.extensions, '2.5.29.17').parsedValue;
         if (san && san.hasOwnProperty('altNames')) {
-          console.log('*Subject Alt Names: ' + JSON.stringify(san));
-        }
-        let kidsRatingValue = getX509Ext(x509.extensions, "1.2.3.4");
+          //console.log('*Subject Alt Names: ' + JSON.stringify(san));
+        }*/
+        let kidsRatingValue = getX509Ext(x509.extensions, "1.3.6.1.4.1.60933.1");
         if (kidsRatingValue) {
           return kidsRatingValue.parsedValue.valueBlock.value;
         } else {
@@ -258,7 +265,7 @@ async function parsePreference() {
 }
 
 async function logRedirect(url, siteAccess) {
-  if (siteAccess === 'B' || siteAccess === 'BB') { // only log when kids violated knowingly...
+  if (siteAccess === 'B' || siteAccess === 'BB' || siteAccess === 'BBB') { // only log when kids violated knowingly...
     logAccessViolated(url, siteAccess);
   }
 }
@@ -273,10 +280,10 @@ function redirect(tabId, url, siteAccess) {
   logRedirect(url, siteAccess);
 
   const redirectUrl = browser.runtime.getURL('blocked.html') + '?url=' + encodeURIComponent(url) + '?access=' + encodeURIComponent(siteAccess);
-  // siteRating 
-  // B : age rating
-  // BB : blocked site
-  // BBB : outside approved hours
+  // siteRating
+  // p1: outside approved hours BBB
+  // p2: blocked site BB
+  // p3: age rating B
 
   chrome.tabs.update(tabId, {
     url: redirectUrl
@@ -286,6 +293,7 @@ function redirect(tabId, url, siteAccess) {
 function verifyAllowedSchedules() {
   console.log('verifyAllowedSchedules');
   const preference = getPreference();
+
   const schedules = JSON.parse(preference.schedules || "[]");
   if (schedules.length === 0) { // allow always lest defined
     console.log('allow always');
@@ -297,7 +305,7 @@ function verifyAllowedSchedules() {
   const currentHour = now.getHours();
 
   const currentMinute = now.getMinutes();
-
+  console.log('today is Day +' + today);
   for (const schedule of schedules) {
     if (schedule.dayId === 'day' + today) { // day5 = Friday
 
@@ -311,6 +319,7 @@ function verifyAllowedSchedules() {
       }
     }
   }
+  console.log('schedule not allowed');
   return false;
 }
 
@@ -318,61 +327,67 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
   if (!changeInfo.url || changeInfo.url.startsWith("moz-extension:")) { // redirecting
     return;
   }
-  // check time
-  let allow = verifyAllowedSchedules();
-  if (allow && allow === false) {
-    redirect(tabId, changeInfo.url, 'BBB'); // BBB blocked by schedules
-  }
 
-  // check site rating
   const originUrl = new URL(changeInfo.url).origin;
   console.log('changeInfo.url.origin: ' + originUrl);
 
-  let siteAccess = ratingCache.get(originUrl);
-  if (siteAccess) {
-    console.log('found siteAccess: ' + siteAccess);
+  // check time
+  let allow = verifyAllowedSchedules();
+  if (allow === false) {
+    console.log('schedule allowed? ' + allow + ' redirect');
+    redirect(tabId, changeInfo.url, 'BBB'); // BBB blocked by schedules
+  } else {
 
-    //TODO cache site rating also
-    if (siteAccess === 'A' || siteAccess === 'AA') {
-      browser.pageAction.setIcon({
-        tabId: tabId,
-        path: "icons/dyno_icon.png"
-      });
-      browser.pageAction.setTitle({
-        tabId: tabId,
-        title: "kidspro Npm"
-      });
-    }
+    // check site rating
 
-    if (siteAccess === 'W') {
-      logAccessViolated(changeInfo.url, siteAccess);
+    let siteAccess = ratingCache.get(originUrl);
+    console.log('siteacess ' + siteAccess);
+    if (siteAccess) {
 
-      browser.pageAction.setIcon({
-        tabId: tabId,
-        path: "icons/info_icon.png"
-      });
-      browser.pageAction.setTitle({
-        tabId: tabId,
-        title: "kidspro Npm - warning"
-      });
-      browser.pageAction.setPopup({
-        tabId: tabId,
-        popup: "popup_warning.html"
-      });
+      console.log('found siteAccess: ' + siteAccess);
 
-      browser.notifications.create({
-        iconUrl: "icons/fox.jpg",
-        type: "basic",
-        title: "KidsPro alert",
-        message: 'Hi you are visiting a website you are not supposed to.',
-        contextMessage: 'this message is...'
-      });
-    }
+      //TODO cache site rating also
+      if (siteAccess === 'A') {
+        browser.pageAction.setIcon({
+          tabId: tabId,
+          path: "icons/dyno_icon.png"
+        });
+        browser.pageAction.setTitle({
+          tabId: tabId,
+          title: "kidspro Npm"
+        });
+      }
 
-    if (siteAccess === 'B' || siteAccess === 'BB') {
-      redirect(tabId, changeInfo.url, siteAccess);
+      if (siteAccess === 'AW') {
+        logAccessViolated(changeInfo.url, siteAccess);
+
+        browser.pageAction.setIcon({
+          tabId: tabId,
+          path: "icons/info_icon.png"
+        });
+        browser.pageAction.setTitle({
+          tabId: tabId,
+          title: "kidspro Npm - warning"
+        });
+        browser.pageAction.setPopup({
+          tabId: tabId,
+          popup: "popup_warning.html"
+        });
+
+        browser.notifications.create({
+          iconUrl: "icons/fox.jpg",
+          type: "basic",
+          title: "KidsPro alert",
+          message: 'Hi you are visiting a website you are not supposed to.',
+          contextMessage: 'this message is...'
+        });
+      }
+      if (siteAccess === 'B' || siteAccess === 'BB') { ///BBB is already redirectd
+        redirect(tabId, changeInfo.url, siteAccess);
+      }
     }
   }
+  console.log('exit');
 });
 
 browser.runtime.onInstalled.addListener(() => {
