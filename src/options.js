@@ -147,16 +147,22 @@ function displayBlockedItems(itemsStr) {
     document.querySelector("#displayBlocked").innerHTML = html;
 }
 
+function isSiteAllowed(siteAccess) {
+    return (siteAccess === 'A' || siteAccess === 'AW');
+}
+
+
+
 function getBlockedReason(siteAccess) {
     let reason = 'not known.';
     if (siteAccess === 'B') {
-        reason = 'The site was blocked due to age rating limit.';
+        reason = 'blocked with age rating limit.';
     } else if (siteAccess === 'BB') {
-        reason = 'The site was blocked as it\'s in the block URL list';
+        reason = 'block websites list';
     } else if (siteAccess === 'BBB') {
-        reason = 'The site was blocked as it was outside the allowed schedule';
+        reason = 'outside the browse schedule';
     } else if (siteAccess === 'AW') {
-        reason = 'The user accessed the site beyond age rating.'
+        reason = 'allowed with age rating limit.'
     }
     return reason;
 }
@@ -183,25 +189,27 @@ function displayLogs(logs) {
             } else if (siteAccess === 'BB' || siteAccess === 'B') {
                 color = "list-group-item-danger";
             }
-            html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex " + color + "\">";
-            html += "<li class=\"list-group-item\">";
-            html += new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time));
-            html += "</li>";
-
-            html += "<li class=\"list-group-item\">";
-            html += items[i].url;
-            html += "</li>";
-
-            html += "<li class=\"list-group-item flex-fill justify-content-between \">";
-            html += getBlockedReason(items[i].siteAccess);
-            if (items[i].numOfTries && items[i].numOfTries > 1 ) {
-                html += "<span class=\"badge bg-secondary rounded-pill position-absolute top-50 end-0 translate-middle\">";
-                html += items[i].numOfTries;
-                html += "</span>";
+            //html += "<ul id=\"displaySchedule\" class=\"list-group list-group-horizontal d-flex " + color + "\">";
+            //html += "<li class=\"list-group-item\">";
+            //html += new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time));
+            //html += "</li>";
+            let logItem = items[i];
+            let isAllowed = isSiteAllowed(logItem.siteAccess);
+            if (isAllowed) {
+                html += "<tr class=\"table-warning\">";
+            } else {
+                html += "<tr>";
             }
-            html += "</li>";
-
-            html += "</ul>";
+           
+            html += "<td>" + new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time)) + "</td>";
+            html += "<td>" + logItem.url.substring(0, 50) + "</td>";
+            html += "<td>" + getBlockedReason(logItem.siteAccess) + "</td>";    
+            html += "<td>";
+            //if (items[i].numOfTries && items[i].numOfTries > 1 ) {
+                html += logItem.numOfTries;
+            //}
+            html += "</td>";
+            html += "</tr>";
         }
     }
     document.querySelector("#displayLogs").innerHTML = html;
