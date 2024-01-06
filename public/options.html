@@ -33,14 +33,14 @@
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label
-                                    title="Birth date to identify the user's age to be used against certificate verification"
-                                    for="bdate" class="form-label lead">Birtddate:</label>
-                                <input type="date" id="bdate" name="bdate" min="2013-01-01" max="2023-12-31"
-                                    class="form-control" required pattern="\d{4}-\d{2}-\d{2}" required autofocus />
+                                    title="Birth year to identify the user's age to be used against certificate verification"
+                                    for="bdate" class="form-label lead">Birth Year:</label>
+                                <input type="year" id="bdate" name="bdate" min="2013" max="2023"
+                                    class="form-control" required pattern="\d{4}" required autofocus />
                             </div>
                         </div>
                         <div class="mb-5 row">
-                            <label title="Age rating according to the user's birtddate" for="rating"
+                            <label title="Age rating according to the user's birth year" for="rating"
                                 class="form-label col-md-2 lead" area-describedby="ratinghelp">Rating:</label>
                             <output type="text" name="rating" id="rating" class="display-6 col-md-2"></output>
                             <div class="col-md-8 d-flex justify-content-start">
@@ -73,8 +73,8 @@
                                                         <td>Early Teen (13-15)</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>LT</td>
-                                                        <td>Late Teen (16-17)</td>
+                                                        <td>MT</td>
+                                                        <td>Mid Teen (16-17)</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

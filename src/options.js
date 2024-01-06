@@ -38,11 +38,25 @@ async function saveOptionsWithPrompt(e) {
     e.preventDefault();
 }
 
+function sendResetCacheMessage(message) {
+    chrome.runtime.sendMessage(
+        {
+            type: 'RESET_CACHE',
+            reason: message
+        },
+        (response) => {
+            console.log(response.message);
+        }
+    );
+
+}
+
 async function saveOptions() {
     console.log('bday typed value: ' + document.querySelector("#bdate").value);
     let birthdate = Date.parse(document.querySelector("#bdate").value);
     console.log('birthdate:' + birthdate);
-
+    // send background to reset caches.
+    sendResetCacheMessage('settings update');
     console.log('nickanme' + document.querySelector("#nickname").value);
     browser.storage.sync.set({
         kidsProUser: {
@@ -112,15 +126,15 @@ function displayAllowedForAll(itemsStr) {
 }
 
 function displayAllowedItems(itemsStr) {
-    console.log('value' + itemsStr); 
+    console.log('value' + itemsStr);
     console.log('display' + document.querySelector("#displayAllowed").value);
 
     let items = itemsStr;
     let html = "";
     if (items) {
         for (let i = 0; i < items.length; i++) {
-            html +="<tr>"
-            html +="<td>" + (i+1) + "</td>"
+            html += "<tr>"
+            html += "<td>" + (i + 1) + "</td>"
             html += "<td>" + items[i] + "</td>";
         }
     }
@@ -137,8 +151,8 @@ function displayBlockedItems(itemsStr) {
     if (items) {
         for (let i = 0; i < items.length; i++) {
             //html += "<li class=\"list-group-item\">"
-            html +="<tr>"
-            html +="<td>" + (i+1) + "</td>"
+            html += "<tr>"
+            html += "<td>" + (i + 1) + "</td>"
             html += "<td>" + items[i] + "</td>";
             //html += "</li>";
         }
@@ -200,13 +214,13 @@ function displayLogs(logs) {
             } else {
                 html += "<tr>";
             }
-           
+
             html += "<td>" + new Intl.DateTimeFormat("en-CA", options).format(new Date(items[i].time)) + "</td>";
             html += "<td>" + logItem.url.substring(0, 50) + "</td>";
-            html += "<td>" + getBlockedReason(logItem.siteAccess) + "</td>";    
+            html += "<td>" + getBlockedReason(logItem.siteAccess) + "</td>";
             html += "<td>";
             //if (items[i].numOfTries && items[i].numOfTries > 1 ) {
-                html += logItem.numOfTries;
+            html += logItem.numOfTries;
             //}
             html += "</td>";
             html += "</tr>";
@@ -272,7 +286,7 @@ async function addScheduleWithPrompt(e) {
 
 function clearNewScheduleField() {
     document.querySelector("#daySelect").selected = false;
-    
+
     document.querySelector("#fromTime").value = "";
     document.querySelector("#toTime").value = "";
 }
@@ -288,7 +302,7 @@ async function addSchedule() {
     let fromTime = document.querySelector("#fromTime").value;
     let toTime = document.querySelector("#toTime").value;
     let selectedDay = document.querySelector("#daySelect").value;
-    
+
     console.log(selectedDay + ': from - ' + fromTime + ' to ' + toTime);
 
     addCheckedDay(selectedDay, fromTime, toTime, days);
@@ -423,7 +437,7 @@ function getRating(birthday) {
         } else if (age <= 15) {
             rating = 'ET';
         } else if (age <= 17) {
-            rating = 'LT';
+            rating = 'MT';
         }
         console.log('rating: ' + rating);
         return rating;

@@ -37,7 +37,7 @@ const ratings = [
   'E', // 6-9
   'T', // 10-12
   'ET', // 13-15
-  'LT']; // 16-17
+  'MT']; // 16-17
 
 // siteRating
 // block priorities
@@ -60,12 +60,11 @@ async function validateSite(details) {
   const preference = getPreference();
   const siteRating = await getCertificateRating(details);
 
-  //console.log('preference: ' + preference);
   let ratingMatched = true;
   let allowed = false;
   let blocked = false;
   let siteUrl = new URL(details.url);
-  //let siteUrl = details.url.replace(/\/$/, "");
+  
   console.log('siteUrl origin - ' + siteUrl.origin);
   let siteAccess = 'A';
 
@@ -75,9 +74,10 @@ async function validateSite(details) {
     if (!allowedForAll.includes(siteUrl.origin) && preference.rating && ratings.indexOf(preference.rating) > -1) {
       ratingMatched = ratings.indexOf(siteRating) > -1 && (ratings.indexOf(siteRating) <= ratings.indexOf(preference.rating));
       if (!ratingMatched) {
-        if (preference.rating === 'P' || preference.rating === 'E' || siteRating === 'NA') {
+        if (preference.rating === 'P' || preference.rating === 'E') { // || siteRating === 'NA'
           siteAccess = 'B';
         } else {
+          console.log('site access AW');
           siteAccess = 'AW'; // not the raiting but allowed with warning
         }
       }
@@ -99,16 +99,6 @@ async function validateSite(details) {
     console.log('siteAccess - ' + siteAccess);
     ratingCache.set(siteUrl.origin, siteAccess, 10000);
 
-    const currentTab = await browser.tabs.getCurrent();
-    //let currentTab = await getCurrentTab();
-    if (currentTab) {
-      console.log("currentTab Id" + JSON.stringify(currentTab));
-    }
-    /*browser.runtime.sendMessage("handleSiteAccess", {
-      url: siteUrl,
-      siteAccess: siteAccess,
-      urlRating: siteRating,
-    });*/
   }
 
 }
@@ -382,6 +372,7 @@ browser.tabs.onUpdated.addListener(function (tabId, changeInfo) {
           contextMessage: 'this message is...'
         });
       }
+
       if (siteAccess === 'B' || siteAccess === 'BB') { ///BBB is already redirectd
         redirect(tabId, changeInfo.url, siteAccess);
       }
@@ -439,6 +430,11 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({
       message,
     });
+    return true;
+  } else if (request.type ==='RESET_CACHE') {
+    console.log('reset cache..');
+    ratingCache = new NodeCache();
+    sendResponse({ message: "reset cache success" });
     return true;
   } else if (request.type === 'verifyPassword') {
     const getP = getAdminPassword();
