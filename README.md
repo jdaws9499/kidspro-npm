@@ -11,8 +11,7 @@ My Chrome Extension
 - Password encoded using bcryptjs x
 - Time restrictions (day and time) x
 - Monitoring (which blocked sites the kids visited) x
-- Have password up front
-- CSS of the existing pages (blocked page can be for children and teens separately, do it in SUMMER)
+
 
 
 ## Bugs
